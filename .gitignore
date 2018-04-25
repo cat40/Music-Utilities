@@ -1,3 +1,12 @@
+#everything else
+*
+
+!.gitignore
+!audioutils/
+!audioutils/*
+!lyutils/
+!lyutils/*
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
