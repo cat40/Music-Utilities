@@ -1,6 +1,7 @@
 from .lyObjs import Clef
 from . import lysrc
-from .note import lyNote
+from . import constants
+
 # These might end up in constants later
 BASS = Clef('bass')
 ALTO = Clef('alto')
@@ -17,12 +18,20 @@ A class for putting instruments into lilypond
     TODO: add support for multi-staff insturments, like piano
     TODO: add midi stuff
     TODO: modify lysrc Pitch to better impliment previous pitch being stored in the insturment
+    The parameter name must be a valid midi name
 '''
 class Instrument(object):
-    def __init__(self, name, clef=None, useGlobal=True, useRelative=True, relative="'"):
-        if name == 'cello':
-            name = 'violincello'
-        self.name = name
+    def __init__(self, name, index, midiname=None, clef=None, useGlobal=True, useRelative=True, relative="'"):
+        if name == 'violincello':
+            name = 'cello'
+        if name not in constants.MIDINAMES:
+            raise ValueError('%s is not a valid instrument name (only lilypond midi names are accepted' % name)
+        if midiname is None:
+            self.midiname = name
+        else:
+            self.midiname = midiname
+        self.insName = name
+        self.index = index
         if clef is None:
             clef = clefs[name]
         self.clef = clef
@@ -47,5 +56,18 @@ class Instrument(object):
             string += str(thing) + ' '
         string += '}'
         return string
+
+    @property
+    def name(self):
+        return self.insName + self.index
+
+    def staffblock(self):
+        string = self.name + 'Part' + ' = \\new Staff \\with {\n'
+        string += 'InstrumentName = ' + self.insName + '\n'
+        string += 'midiInstrument = ' + self.midiname + '\n'
+        string += '}' + '\\' + self.name
+        return string
+
+
 
 

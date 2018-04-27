@@ -6,23 +6,35 @@ class lyutils(object):
     \header{} thing
     @globals is a list of lyObj that go in the global section
     '''
-    def __init__(self, instruments, header={}, globals=[], midi=True):
+    def __init__(self, instruments, header=None, globals=None, midi=True):
         self.string = ''
-        self.header = header  # consider checking if the keys are valid, but that will be very hard to maintain as lilypond updates
+        self.header = header if header is not None else {} # consider checking if the keys are valid, but that will be very hard to maintain as lilypond updates
                               # might actaully be able to import lilypond source code and use that to check if the keys are valid
-        self.globals = globals
+        self.globals = globals if globals is not None else []
         self.instruments = instruments
+
+    def __repr__(self):
+        return 'Instrument object with %s instruments' % len(self.instruments) # todo: make this more descriptive
 
     def __str__(self):
         string = '\\version "2.18.2"'
+        # header
         if self.header:
             string += '\\header {\n'
             string += '\n'.join(key + ' = ' + '"'+value+'"' for key, value in self.header.items())
             string += '\n}'
+        # globals
         if self.globals:
             string += '\\global = {\n'
             string += '\n'.join(self.globals)
             string += '\n}'
-        string += '\n\n'.join(self.instruments)
-
+        # instruments
+        string += '\n\n'.join(self.instruments) + '\n'
+        # instrument staff blocks
+        string += '\n\n'.join(instrument.staffblock() for instrument in self.instruments)
+        # score block
+        string += '\n\n\\score {\n<<\n'
+        for instrument in self.instruments:
+            string += '\\'+instrument.name+'\n'
+        string += '>>\n\\layout {}\n\\midi {}\n}'
         return string
