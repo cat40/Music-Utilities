@@ -14,12 +14,13 @@ accidental: Whether the note is sharp or flat. Will be constants.LYSHARP or cons
 
 '''
 class lyNote(object):
-    def __init__(self, dur):
+    def __init__(self, dur, useRelative=True):
         self.pitches = []
         if isinstance(dur, Duration):
             self.duration = dur
         else:
             self.duration = Duration(dur)
+        self.useRelative = useRelative
 
     def __str__(self):
         if len(self.pitches) > 1:
@@ -29,7 +30,7 @@ class lyNote(object):
         return string + str(self.duration)
 
 
-class Duration(object): # a class to hold duration, and convert the weird ones like breve and longa to ints
+class Duration(object):  # a class to hold duration, and convert the weird ones like breve and longa to ints
     def __init__(self, duration):
         if duration not in VALIDNOTEDURATIONS:
             raise ValueError('%s is not a valid not duration' % duration)
