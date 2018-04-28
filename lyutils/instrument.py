@@ -1,6 +1,7 @@
 from .lyObjs import Clef
 from . import lysrc
 from . import constants
+import roman_numerals
 
 # These might end up in constants later
 BASS = Clef('bass')
@@ -57,17 +58,17 @@ class Instrument(object):
         string += '}'
         return string
 
-    @property
-    def name(self):
-        return self.insName + self.index
-
     def staffblock(self):
         string = self.name + 'Part' + ' = \\new Staff \\with {\n'
-        string += 'InstrumentName = ' + self.insName + '\n'
+        string += 'InstrumentName = ' + self.displayname + '\n'
         string += 'midiInstrument = ' + self.midiname + '\n'
         string += '}' + '\\' + self.name
         return string
 
+    @property
+    def name(self):
+        return self.insName + self.index
 
-
-
+    @property
+    def displayname(self):
+        return self.insName + roman_numerals.convert_to_numeral(self.index+1) if self.index else self.insName

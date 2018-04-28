@@ -38,7 +38,9 @@ class Clef(lyObj):
         super().entries.append('\\'+clef)
 
 class MIDI(lyObj):
-    pass # for changing the midi instrument in the middle of the piece
+    def __init__(selfs, instname):
+        super().__init__(False, r'\set midiInstrument = # "')
+        super().entries.append(instname + '"')
 '''
 class lyObj(object):
     def __init__(self):

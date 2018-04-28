@@ -6,6 +6,9 @@
 !audioutils/*
 !lyutils/
 !lyutils/*
+!audioutilspy2/
+!audioutilspy2/*
+audioutilspy2/cache
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
