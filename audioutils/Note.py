@@ -1,4 +1,6 @@
 import librosa
+
+
 class Note(object):
     def __init__(self, freq, start, end, volume, perc=False):
         if not perc:

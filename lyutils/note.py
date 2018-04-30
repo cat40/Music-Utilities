@@ -13,13 +13,13 @@ duration:   an integer describing the duration of the note, the same way as in l
 accidental: Whether the note is sharp or flat. Will be constants.LYSHARP or constants.LYFLAT
 
 '''
-class lyNote(object):
-    def __init__(self, dur, pitches=None, useRelative=True):
-        self.pitches = [] if pitches is None else pitches if isinstance(pitches, list) else list(pitches)
-        if isinstance(dur, Duration):
-            self.duration = dur
+class Note(object):
+    def __init__(self, pitches, duration, useRelative=True):
+        self.pitches = pitches if isinstance(pitches, list) else list(pitches)
+        if isinstance(duration, Duration):
+            self.duration = duration
         else:
-            self.duration = Duration(dur)
+            self.duration = Duration(duration)
         self.useRelative = useRelative
 
     def __str__(self):
@@ -53,7 +53,7 @@ Arguments have been explained as I understand them, not nessesarily as implement
 class Pitch(lysrc.Pitch):
     def __init__(self, octave, step, alteration):
         super().__init__()
-        super().step = step  # step above c in the octave, where c = 0, d = 1, a=6, b=7, etc
+        super().step = step  # step above c in the octave, where c = 0, d = 1, a=5, b=6, etc
         super().octave = octave  # the octave of the note, where c3 is 0 and middle c is 1
         super().alteration = alteration  # number of semitones above or below the step, I think
                                          # (1=sharp, 2=doublesharp, -1=flat, -2=double flat
