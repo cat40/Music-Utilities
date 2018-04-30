@@ -1,5 +1,5 @@
 from .lyObjs import *
-class lyutils(object):
+class Music(object):
     '''
     arguments:
     @header is a dictionary of items that belong in the lilypond
@@ -38,3 +38,7 @@ class lyutils(object):
             string += '\\'+instrument.name+'\n'
         string += '>>\n\\layout {}\n\\midi {}\n}'
         return string
+
+    def write(self, fname, mode='w'):
+        with open(fname, mode) as f:
+            f.write(str(self))
