@@ -1,5 +1,5 @@
 from .constants import *
-from . import instrument
+from .instrument import Instrument
 from . import lymusic
 from .lyObjs import *
 from .note import Pitch, Duration, Note

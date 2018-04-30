@@ -387,10 +387,6 @@ class LibrosaObject(object):
             self.cache.write(percussive, 'percussive')
         return harmonic, percussive
 
-    def getBase(self):
-        
-        wholenote = base[1] * base[0]  # duration of a whole note
-
     # just a wrapper for scipy.signal.butter for readability
     @staticmethod
     def helper_butter(sr, fmin=0, fmax=None, order=6,

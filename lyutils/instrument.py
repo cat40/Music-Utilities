@@ -8,6 +8,9 @@ BASS = Clef('bass')
 ALTO = Clef('alto')
 TREBLE = Clef('treble')
 
+index = 0  # consider making a dictionary for each instrument (make sure to include an other category
+# could also define it dynamically so that the dictionary only includes names that have been used
+
 # expand this later, for now it's just string instruments
 clefs = {'bass' : BASS,
          'violincello' : BASS,
@@ -22,7 +25,8 @@ A class for putting instruments into lilypond
     The parameter name must be a valid midi name
 '''
 class Instrument(object):
-    def __init__(self, name, index, midiname=None, clef=None, useGlobal=True, useRelative=True, relative="'"):
+    def __init__(self, name, sequence, paramindex=None, midiname=None, clef=None, useGlobal=True, useRelative=True, relative="'"):
+        global index
         if name == 'violincello':
             name = 'cello'
         if name not in constants.MIDINAMES:
@@ -39,8 +43,10 @@ class Instrument(object):
         self.useGlobal = useGlobal
         self.useRelative = useRelative  # wheter or not to include a \relative before the braces
         self.relative = relative        # note the music is relative to. can be a note, or just , and '
-        self.sequence = []              # list of notes, lyObjs, and everything else in between the \relative{} braces
-        #self.PreviousPitch = None
+        self.sequence = sequence        # list of notes, lyObjs, and everything else in between the \relative{} braces
+        index += 1 # might want to do this conditionally on the index being unspecified
+        if paramindex is None: self.index = index
+        # self.PreviousPitch = None
 
     def __str__(self):
         lysrc.PreviousPitch = None
