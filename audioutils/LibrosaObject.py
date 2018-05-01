@@ -253,7 +253,7 @@ class LibrosaObject(object):
         b, a = self.A_weighting(48000)
         waveform = signal.filtfilt(b, a, waveform)  # perform a-weighting
         librosa.output.write_wav(
-            os.path.join('\\tests\\results', os.path.splitext(os.path.basename(self.fname))[0] + '_notes.wav'),
+            os.path.join('tests\\results', os.path.splitext(os.path.basename(self.fname))[0] + '_notes.wav'),
             waveform, self.samplingrate)
 
     '''
@@ -264,7 +264,7 @@ class LibrosaObject(object):
         yInv = numpy.array([(1 - abs(x)) for x in self.waveform])
         # yInv = numpy.array([math.copysign(1-abs(x), x) for x in self.waveform])
         librosa.output.write_wav(
-            os.path.join('\\tests\\results', os.path.splitext(os.path.basename(self.fname))[0] + '_test_invert.wav'),
+            os.path.join('tests\\results', os.path.splitext(os.path.basename(self.fname))[0] + '_test_invert.wav'),
             yInv, self.samplingrate)
 
     def pitchCurve(self):
