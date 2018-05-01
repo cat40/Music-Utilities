@@ -1,12 +1,13 @@
 import collections
 import math
-
+from librosa import note_to_hz
 from .. import lyutils
-# presets:
 
 '''
 :parameter
 :param
+
+
 '''
 class Instrument(object):
     def __init__(self, minnote=None, maxnote=None, name=None, preset=None, notes: list=None):
@@ -14,8 +15,8 @@ class Instrument(object):
             pass # todo: impliment getting stuff from the presets
         elif not(minnote is not None and maxnote is not None and name is not None):
             raise ValueError('Not all parameters were specified')
-        self.minnote = minnote
-        self.maxnote = maxnote
+        self.minnote = minnote if isinstance(minnote, (int, float)) else note_to_hz(minnote)
+        self.maxnote = maxnote if isinstance(maxnote, (int, float)) else note_to_hz(maxnote)
         self.name = name
         self.notes = [] if notes is None else notes
 
@@ -104,3 +105,11 @@ class Instrument(object):
         if nearest-tol < log < nearest+tol:
             return nearest, 1
         return nearest, 0  # todo: add support for double dotted notes
+
+
+# presets:
+# pitches are the sounded pitch, not the written pitch
+VIOLIN = Instrument('g3', 'a7', 'violin')
+VIOLA = Instrument('c3', 'e6', 'viola')
+CELLO = Instrument('c2', 'c6', 'cello')
+BASS = Instrument('e1', 'c4', 'bass')

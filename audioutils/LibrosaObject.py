@@ -387,6 +387,9 @@ class LibrosaObject(object):
             self.cache.write(percussive, 'percussive')
         return harmonic, percussive
 
+    def splittoinstruments(self, instruments):
+        pass
+
     # just a wrapper for scipy.signal.butter for readability
     @staticmethod
     def helper_butter(sr, fmin=0, fmax=None, order=6,
@@ -408,8 +411,8 @@ class LibrosaObject(object):
         iteronsets = iter(enumerate(onsets))  # willing to guess this is ineffecient
         next(iteronsets)  # skip first value.
         for i, onset in iteronsets:
-            if not cls.closeTo(onset, onsets[
-                i - 1]):  # this will remove all onsets that are chained just close enough to each other, may not be desireable
+            if not cls.closeTo(onset, onsets[i - 1]):  # this will remove all onsets that are chained just close enough
+                #  to each other, may not be desireable
                 numpy.append(new, onset)
 
     @staticmethod
