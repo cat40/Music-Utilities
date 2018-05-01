@@ -388,7 +388,10 @@ class LibrosaObject(object):
         return harmonic, percussive
 
     def splittoinstruments(self, instruments):
-        pass
+        for instrument in instruments:
+            instrument.notes = [note for note in self.notes if instrument.minnote <= note.freq <= instrument.maxnote]
+        return instruments  # not strictly necessary, as the instruments list will be modified in place
+        # to avoid modifying in place, create a new Instrument object with the old instrument as the preset
 
     # just a wrapper for scipy.signal.butter for readability
     @staticmethod
