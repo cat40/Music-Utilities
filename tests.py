@@ -12,6 +12,8 @@ def test(fname, instruments):
     test.outputNotes()
     testmus = test.toMusic(instruments)
     testmus.write(os.path.join(RESULTSPATH, fname+'.ly'))  # todo: remove previous file extension before the .ly
+    print(str(testmus))
 
 
-instruments = [VIOLIN]
+instruments = [VIOLIN, CELLO]
+test('15 Romantic Flight.mp3')
