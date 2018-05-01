@@ -1,13 +1,9 @@
 # -*- coding: utf-8 -*-
 # import inspect
 import sys
-print('sys')
 import string
-print('string')
 import re
-print('re')
 from . import lilylib as ly
-print('lilylib')
 
 _ = ly._
 

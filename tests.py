@@ -16,4 +16,4 @@ def test(fname, instruments):
 
 
 instruments = [VIOLIN, CELLO]
-test('15 Romantic Flight.mp3')
+test('15 Romantic Flight.mp3', instruments)

@@ -115,27 +115,27 @@ class LibrosaObject(object):
         # split remaining by frequency (make sure the above isn't good enough first
         onsetsP = self.onsets_helper(percussive, self.samplingrate)
         # onsets.append((onsetsP, percussive))
-        numpy.concatenate(onsets, [(onsetsP, percussive)])
+        numpy.concatenate([onsets, (onsetsP, percussive)])
         for i, y in enumerate(self.splitByFifths(y=harmonic)):
             onsets_i = self.onsets_helper(y, self.samplingrate)
-            numpy.concatenate(onsets, [(onsets_i, y)])
+            numpy.concatenate([onsets, (onsets_i, y)])
             # onsets.append((onsets_i, y))
             if debug:
                 clicks = librosa.core.clicks(frames=librosa.core.samples_to_frames(onsets_i), sr=self.samplingrate,
                                              click_freq=220)
-                librosa.output.write_wav(os.path.join('..\\tests\\results',
+                librosa.output.write_wav(os.path.join('tests\\results',
                                                       os.path.splitext(os.path.basename(self.fname))[
                                                           0] + '_onsets_octave_%s.wav' % i), clicks, self.samplingrate)
         if debug:
-            librosa.output.write_wav(os.path.join('..\\tests\\results', os.path.splitext(os.path.basename(self.fname))[
+            librosa.output.write_wav(os.path.join('tests\\results', os.path.splitext(os.path.basename(self.fname))[
                 0] + '_percussive.wav'), percussive, self.samplingrate)
             librosa.output.write_wav(
-                os.path.join('..\\tests\\results', os.path.splitext(os.path.basename(self.fname))[0] + '_harmonic.wav'),
+                os.path.join('tests\\results', os.path.splitext(os.path.basename(self.fname))[0] + '_harmonic.wav'),
                 harmonic, self.samplingrate)
             clicks = librosa.core.clicks(frames=librosa.core.samples_to_frames(onsetsP), sr=self.samplingrate,
                                          click_freq=220)
             librosa.output.write_wav(
-                os.path.join('..\\tests\\results', os.path.splitext(os.path.basename(self.fname))[0] + '_onsets_p.wav'),
+                os.path.join('tests\\results', os.path.splitext(os.path.basename(self.fname))[0] + '_onsets_p.wav'),
                 clicks, self.samplingrate)
         if self.usecache:
             self.cache.write(onsets, 'onsets')
