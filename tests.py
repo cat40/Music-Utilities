@@ -7,10 +7,10 @@ TESTPATH = '.\\tests\\'
 RESULTSPATH = '.\\tests\\results\\'
 
 def test(fname, instruments):
-    test = audioutils.LibrosaObject(os.path.join(TESTPATH, fname))
-    test.getNotes()
-    test.outputNotes()
-    testmus = test.toMusic(instruments)
+    a = audioutils.LibrosaObject(os.path.join(TESTPATH, fname))
+    a.getNotes()
+    a.outputNotes()
+    testmus = a.toMusic(instruments)
     testmus.write(os.path.join(RESULTSPATH, fname+'.ly'))  # todo: remove previous file extension before the .ly
     print(str(testmus))
 
