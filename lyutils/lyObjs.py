@@ -8,7 +8,7 @@ class lyObj(object):
         product = self.base
         if self.hasbrackets: product += '\n{'
         else: product += ' '
-        product += ' '.join(entries)
+        product += ' '.join(self.entries)
         if self.hasbrackets: product += '\n}'
         return product
 
@@ -23,24 +23,24 @@ class Key(lyObj):
     modes = {'major' : '\\major', 'minor' : '\\minor'}
     def __init__(self, note, mode):
         super().__init__(False, r'\key')
-        super().entries += [note, self.modes[mode]]
+        self.entries += [note, self.modes[mode]]
 
 
 class Time(lyObj):
     def __init__(self, n, d):
         super().__init__(False, r'\time')
-        super().entries.append('%s/%s' % (n, d))
+        self.entries.append('%s/%s' % (n, d))
 
 
 class Clef(lyObj):
     def __init__(self, clef):
         super().__init__(False, r'\clef')
-        super().entries.append('\\'+clef)
+        self.entries.append('\\'+clef)
 
 class MIDI(lyObj):
-    def __init__(selfs, instname):
+    def __init__(self, instname):
         super().__init__(False, r'\set midiInstrument = # "')
-        super().entries.append(instname + '"')
+        self.entries.append(instname + '"')
 '''
 class lyObj(object):
     def __init__(self):
