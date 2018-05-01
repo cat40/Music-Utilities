@@ -1,7 +1,10 @@
 import collections
 import math
 from librosa import note_to_hz
-from .. import lyutils
+import sys
+sys.path.append('..\\lyutils')
+import lyutils
+sys.path.remove('..\\lyutils')
 
 '''
 :parameter
