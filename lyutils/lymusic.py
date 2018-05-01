@@ -6,11 +6,11 @@ class Music(object):
     \header{} thing
     @globals is a list of lyObj that go in the global section
     '''
-    def __init__(self, instruments, header=None, globals=None, midi=True):
+    def __init__(self, instruments, header=None, globalparts=None, midi=True):
         self.string = ''
         self.header = header if header is not None else {} # consider checking if the keys are valid, but that will be very hard to maintain as lilypond updates
                               # might actaully be able to import lilypond source code and use that to check if the keys are valid
-        self.globals = globals if globals is not None else []
+        self.globalparts = globalparts if globalparts is not None else []
         self.instruments = instruments
 
     def __repr__(self):

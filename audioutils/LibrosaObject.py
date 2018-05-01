@@ -4,6 +4,8 @@ import librosa
 from scipy import signal
 import numpy
 import math
+
+import lyutils
 from .Cache import Cache
 from .Note import Note
 from numpy import pi, polymul
@@ -392,6 +394,11 @@ class LibrosaObject(object):
             instrument.notes = [note for note in self.notes if instrument.minnote <= note.freq <= instrument.maxnote]
         return instruments  # not strictly necessary, as the instruments list will be modified in place
         # to avoid modifying in place, create a new Instrument object with the old instrument as the preset
+
+    def toMusic(self, instruments):
+        instruments = self.splittoinstruments(instruments)
+        globalblock = [lyutils.Time(4, 4), lyutils.Key('c', 'major')]
+        return lyutils.Music(instruments, globalparts=globalblock)
 
     # just a wrapper for scipy.signal.butter for readability
     @staticmethod
