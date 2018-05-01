@@ -1,4 +1,4 @@
-from pygame import mixer  # this is a little slow, see if another dedicated module would be faster
+# from pygame import mixer  # this is a little slow, see if another dedicated module would be faster
 import os
 import librosa
 from scipy import signal
@@ -305,11 +305,6 @@ class LibrosaObject(object):
         phrase = librosa.core.frames_to_samples(1, self.samplingrate)
         for t in range(1, librosa.core.samples_to_frames(len(self.waveform))):
             pass
-
-    def playAudio(self):
-        mixer.init()
-        mixer.music.load(self.fname)
-        mixer.music.play()
 
     # apply a butterworth filter to seperate the buttermilk from the butter
     def butter(self, fmin=0, fmax=None, order=6, y=None):
