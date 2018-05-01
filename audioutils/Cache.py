@@ -45,7 +45,7 @@ class Cache(object):
         if isinstance(data, numpy.ndarray):
             numpy.save(self.genfname(name+'.npy'), data)
         else:
-            with open(self.genfname(name), 'w') as f:
+            with open(self.genfname(name), 'wb') as f:
                 pickle.dump(data, f)
 
     '''
