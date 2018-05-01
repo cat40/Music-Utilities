@@ -2,7 +2,7 @@ class lyObj(object):
     def __init__(self, hasbrackets, base, *entries):
         self.hasbrackets = hasbrackets
         self.base = base  # might not need this if child attributes are visible to the parent class
-        self.entries = entries
+        self.entries = list(entries)
 
     def __str__(self):
         product = self.base
