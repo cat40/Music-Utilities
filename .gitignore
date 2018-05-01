@@ -6,6 +6,8 @@
 !audioutils/*
 !lyutils/
 !lyutils/*
+!lyutils/lysrc/
+!lyutils/lysrc/*
 !audioutilspy2/
 !audioutilspy2/*
 audioutilspy2/cache
