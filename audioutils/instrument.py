@@ -2,7 +2,7 @@ import collections
 import math
 from librosa import note_to_hz
 import sys
-sys.path.append('..\\lyutils')
+sys.path.append('..\\lyutils') # todo: reweite this to use importlib instead
 import lyutils
 sys.path.remove('..\\lyutils')
 

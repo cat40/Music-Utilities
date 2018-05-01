@@ -24,9 +24,9 @@ class Music(object):
             string += '\n'.join(key + ' = ' + '"'+value+'"' for key, value in self.header.items())
             string += '\n}'
         # globals
-        if self.globals:
+        if self.globalparts:
             string += '\\global = {\n'
-            string += '\n'.join(self.globals)
+            string += '\n'.join(self.globalparts)
             string += '\n}'
         # instruments
         string += '\n\n'.join(self.instruments) + '\n'
