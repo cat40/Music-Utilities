@@ -196,17 +196,11 @@ class LibrosaObject(object):
                 return self.notes
             except:  # cModule.CacheNotFoundError:
                 pass
-        print('starting onsets')
         for x, (onsets, y) in enumerate(self.getOnsets(debug=True)):
-            print('onset')
             # go through each onset
-            for i, j in zip([0] + list(onsets),
-                            list(onsets) + [len(y)]):  # numpy.dstack(([0]+onsets, onsets+[len(y)]))[0]:#[None]):
-                print('in i/j loop', \
-                      librosa.core.samples_to_time(i), librosa.core.samples_to_time(j))
+            for i, j in zip([0] + list(onsets), list(onsets) + [len(y)]):
                 # pitch = self.getPitch(y[i:j], i, j, x)
                 pitch = self.getPitchCheap(y[i:j], self.samplingrate)
-                print('have pitch', pitch)
                 # rmse = librosa.feature.rmse(y=y[i:j])
                 # print 'have rmse'
                 # volume = sum(rmse)/len(rmse) #for some reason, this is still an array
@@ -215,7 +209,6 @@ class LibrosaObject(object):
                 # print volume.shape
                 volume = self.rmse(y[i:j])
                 # volume = 0
-                print('have volume', volume)
                 if volume > 10 ** -5 and pitch > 0:
                     self.notes.append(Note(pitch, librosa.core.samples_to_time(i, sr=self.samplingrate),
                                            librosa.core.samples_to_time(j, sr=self.samplingrate),
@@ -386,8 +379,10 @@ class LibrosaObject(object):
 
     def splittoinstruments(self, instruments):
         for instrument in instruments:
-            print(instrument.minfreq, instrument.maxfreq)
             instrument.notes = [note for note in self.notes if instrument.minnote <= note.freq <= instrument.maxnote]
+            print(instrument.notes)
+        print()
+        print(instruments[0].notes)
         return instruments  # not strictly necessary, as the instruments list will be modified in place
         # to avoid modifying in place, create a new Instrument object with the old instrument as the preset
 
