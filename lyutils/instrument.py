@@ -13,7 +13,7 @@ index = 0  # consider making a dictionary for each instrument (make sure to incl
 
 # expand this later, for now it's just string instruments
 clefs = {'bass' : BASS,
-         'violincello' : BASS,
+         'cello' : BASS,
          'viola' : ALTO,
          'violin' : TREBLE}
 
@@ -73,7 +73,7 @@ class Instrument(object):
 
     @property
     def name(self):
-        return self.insName + self.index
+        return self.insName + str(self.index)
 
     @property
     def displayname(self):
