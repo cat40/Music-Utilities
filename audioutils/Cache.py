@@ -60,6 +60,8 @@ class Cache(object):
     load a file under the name fname as an object
     rasies exceptions.CacheNotFoundError if the file does not exist
     '''
+    # todo: change so this returns None instead of rasing an error if file does not exist
+    # this will require changing all uses of cache
     def load(self, fname):
         fname = self.genfname(fname)
         try:
@@ -93,7 +95,7 @@ class Cache(object):
     clears the cache by delting all files
     '''
     def clear(self):
-        for fname in os.listdir(fname):
+        for fname in os.listdir(self._path):
             fname = self.genfname(fname)
             if os.path.isdir(fname):
                 shutil.rmtree(fname)
@@ -113,7 +115,7 @@ class Cache(object):
     Instead use a try-except statement catching the exceptions.CacheNotFoundError. 
     '''
     def exists(self, fname): #consider replacing this with a custom exception for use in try-except statements
-        return os.path.isfile(self.genfname(fname)) if isNumpy(fname) else os.path.isfile(self.genfname(fname+pickleext))
+        return os.path.isfile(self.genfname(fname)) if self.isNumpy(fname) else os.path.isfile(self.genfname(fname+pickleext))
 
     @staticmethod
     def isNumpy(fname):

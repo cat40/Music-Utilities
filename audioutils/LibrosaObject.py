@@ -107,19 +107,19 @@ class LibrosaObject(object):
     def getOnsets(self, debug=False):
         if self.usecache:
             try:
-                return self.cache.load('onsets.npy')
+                return self.cache.load('onsets')
             except:  # cModule.CacheNotFoundError:
                 pass
-        onsets = numpy.empty((0,))  # might need to make this a numpy array for better management
+        onsets = []  # might need to make this a numpy array for better management
         harmonic, percussive = self.splitHarmonicPercussive()  # test this, also seems to take a very long time. Consider making the defenition of a perucssive sound more strict(see librosa docs)
         # split remaining by frequency (make sure the above isn't good enough first
         onsetsP = self.onsets_helper(percussive, self.samplingrate)
-        # onsets.append((onsetsP, percussive))
-        numpy.concatenate([onsets, (onsetsP, percussive)])
+        onsets.append((onsetsP, percussive))
+        # numpy.concatenate([onsets, (onsetsP, percussive)])
         for i, y in enumerate(self.splitByFifths(y=harmonic)):
             onsets_i = self.onsets_helper(y, self.samplingrate)
-            numpy.concatenate([onsets, (onsets_i, y)])
-            # onsets.append((onsets_i, y))
+            # numpy.concatenate([onsets, (onsets_i, y)])
+            onsets.append((onsets_i, y))
             if debug:
                 clicks = librosa.core.clicks(frames=librosa.core.samples_to_frames(onsets_i), sr=self.samplingrate,
                                              click_freq=220)
@@ -390,15 +390,14 @@ class LibrosaObject(object):
         return instruments  # not strictly necessary, as the instruments list will be modified in place
         # to avoid modifying in place, create a new Instrument object with the old instrument as the preset
 
-    def toMusic(self, instruments):
+    def toMusic(self, instruments, base=4):
         instruments = self.splittoinstruments(instruments)
         globalblock = [lyutils.Time(4, 4), lyutils.Key('c', 'major')]
-        return lyutils.Music(instruments, globalparts=globalblock)
+        return lyutils.Music(instruments, globalparts=globalblock, basenote=base)
 
     # just a wrapper for scipy.signal.butter for readability
     @staticmethod
-    def helper_butter(sr, fmin=0, fmax=None, order=6,
-                      output='sos'):  # possible candidate for caching, but would need to be made non-static
+    def helper_butter(sr, fmin=0, fmax=None, order=6, output='sos'):
         nyquist = sr / 2
         assert fmax < nyquist, 'maximum frequency is above the Nyquist frequency'
         cutofflow = fmin / nyquist
