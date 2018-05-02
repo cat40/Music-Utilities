@@ -77,4 +77,4 @@ class Instrument(object):
 
     @property
     def displayname(self):
-        return self.insName + roman_numerals.convert_to_numeral(self.index+1) if self.index else self.insName
+        return self.insName + str(self.index) if self.index else self.insName # roman_numerals.convert_to_numeral(self.index+1) if self.index else self.insName
