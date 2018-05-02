@@ -32,7 +32,7 @@ class Note(object):
         return self.freq >= self.other
 
     def __str__(self):
-        return self.name + ' ' + self.duration
+        return str(self.name) + ' ' + str(self.duration)
 
     def __repr__(self):
-        return ' '.join((self.freq, self.name, self.duration))
+        return ' '.join(map(str, (self.freq, self.name, self.duration)))
