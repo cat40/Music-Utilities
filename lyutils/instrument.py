@@ -1,7 +1,7 @@
 from .lyObjs import Clef
 from . import lysrc
 from . import constants
-import roman_numerals
+from .romannumerals import romannumerals
 
 # These might end up in constants later
 BASS = Clef('bass')
@@ -82,7 +82,7 @@ class Instrument(object):
 
     @property
     def name(self):
-        return self.insName + str(self.index)
+        return self.insName + romannumerals(self.index)
 
     @property
     def displayname(self):
