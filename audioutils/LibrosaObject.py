@@ -232,17 +232,10 @@ class LibrosaObject(object):
         for note in self.notes:  # filter(lambda note : note.volume > 0.01, self.notes):
             start = librosa.core.time_to_samples(note.start, self.samplingrate)
             end = librosa.core.time_to_samples(note.end, self.samplingrate)
-            print(start, end)
-            print(note.start, note.end)
-            print(note.freq)
             # waveform[start:end] += self.genSine(note.freq, 0.5, self.samplingrate, end-start)
             sine = self.genSineFunc(self.normalizeNote(note.freq), note.volume, self.samplingrate)
-            for i, x in enumerate(waveform[start:end]):
-                print(i, x)
-                break
             waveform[start:end] = [(sine(i) + x) for i, x in enumerate(waveform[start:end])]
             # map(lambda x : sine(i) + x, waveform[start:end])
-            print('a')
         b, a = self.A_weighting(48000)
         waveform = signal.filtfilt(b, a, waveform)  # perform a-weighting
         librosa.output.write_wav(
@@ -486,15 +479,8 @@ class LibrosaObject(object):
     @staticmethod
     def genSine(freq, amp, sr, duration):
         duration = librosa.core.time_to_samples(duration)
-        print(duration)
         period = librosa.core.time_to_samples(1 / freq)
-        print(period)
         x = numpy.arange(period)  # numpy.linspace(0, duration, num=duration)
-        print(x)
-        print(freq)
-        print(sr)
-        print(amp)
-        print(amp * numpy.sin(2 * numpy.pi * freq * x / sr))
         return numpy.tile(amp * numpy.sin(2 * numpy.pi * freq * x / sr), duration / period)
 
 
