@@ -26,24 +26,9 @@ class Note(object):
         if len(self.pitches) > 1:
             string = '<' + ' '.join(map(str, self.pitches)) + '>'
         else:
-            string = str(map(str, self.pitches))
+            string = str(self.pitches)
         return string + str(self.duration)
 
-
-# class Duration(object):  # a class to hold duration, and convert the weird ones like breve and longa to ints
-#     def __init__(self, duration):
-#         if duration not in VALIDNOTEDURATIONS:
-#             raise ValueError('%s is not a valid not duration' % duration)
-#         self.duration = duration
-#
-#     def __int__(self):
-#         if self.duration in STRNOTEDURATIONS:
-#             return STRNOTEDURATIONS[self.duration]
-#         else:
-#             return int(self.duration)
-#
-#     def __str__(self):
-#         return self.duration
 
 '''
 These are just wrapper classes for the lilypond source classes to make them a bit easier to work with

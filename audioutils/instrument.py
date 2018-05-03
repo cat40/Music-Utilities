@@ -69,11 +69,12 @@ class Instrument(object):
     all values can be stored in the list and an average taken
     '''
     # todo: add rest detection (look for empty space after sorting
-    def alignnotes(self, wholenote, tol=.5, cutofffreq=3000):
+    # this method will fail if there are simultanious notes of different length on the same instrument
+    def alignnotes(self, wholenote, tol=.5, cutofffreq=3000, cutoffvol=.01):
         notesdict = {}
         newnotes = []
         for note in self.notes:
-            if note.freq >= cutofffreq:
+            if note.freq >= cutofffreq or note.volume <= cutoffvol:
                 continue
             if not notesdict:
                 notesdict[(note.start, note.end, 1)] = [note] # i might need to be 0

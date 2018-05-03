@@ -54,11 +54,11 @@ class Instrument(object):
 
     def __str__(self):
         relative = self.relative if any(s in self.relative for s in 'abcdefg') else 'c' + self.relative
-        relPitch = lysrc.Pitch() # todo: un hardcode this (right now it's always relative to c4
-        relPitch.step=0
-        relPitch.octave=1
-        relPitch.alteration=0
-        lysrc.PreviousPitch = relPitch
+        # relPitch = lysrc.Pitch() # todo: un hardcode this (right now it's always relative to c4
+        # relPitch.step=0
+        # relPitch.octave=1
+        # relPitch.alteration=0
+        # lysrc.PreviousPitch = relPitch
         lysrc.relative_pitches = self.useRelative # might want to consider setting this back to its previous value after being done with it
         string = '%s = ' % self.name
         if self.useRelative:
