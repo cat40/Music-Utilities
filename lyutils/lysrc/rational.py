@@ -188,6 +188,9 @@ class Rational(object):
            numerator = int_part + 1
         return Rational(numerator, denominator)
 
+    def __eq__(self, other):
+        return self.denominator() == other.denominator() and self.numerator() == other.numerator()
+
 
 
 def rational_from_exact_float(x):

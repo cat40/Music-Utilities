@@ -75,14 +75,14 @@ class Instrument(object):
 
     def staffblock(self):
         string = self.name + 'Part' + ' = \\new Staff \\with {\n'
-        string += 'InstrumentName = ' + self.displayname + '\n'
-        string += 'midiInstrument = ' + self.midiname + '\n'
+        string += 'InstrumentName = "' + self.displayname + '"\n'
+        string += 'midiInstrument = "' + self.midiname + '"\n'
         string += '}' + '\\' + self.name
         return string
 
     @property
     def name(self):
-        return self.insName + romannumerals(self.index)
+        return (self.insName + romannumerals(self.index)).strip(' ')
 
     @property
     def displayname(self):

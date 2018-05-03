@@ -140,7 +140,7 @@ class Duration:
     def __init__ (self):
         self._duration_log = 0
         self.dots = 0
-        self.factor = Rational (1)
+        self.factor = Rational(1, 1)
 
     def lisp_expression (self):
         return '(ly:make-duration %d %d %d %d)' % (self.duration_log,
@@ -170,11 +170,13 @@ class Duration:
             str = '%d' % (1 << self.duration_log)
         str += '.'*self.dots
 
-        if factor != Rational (1,1):
-            if factor.denominator () != 1:
-                str += '*%d/%d' % (factor.numerator (), factor.denominator ())
+        print(factor, Rational(1, 1))
+        print(factor == Rational(1, 1))
+        if factor != Rational(1, 1):
+            if factor.denominator() != 1:
+                str += '*%d/%d' % (factor.numerator(), factor.denominator())
             else:
-                str += '*%d' % factor.numerator ()
+                str += '*%d' % factor.numerator()
 
         return str
 

@@ -18,15 +18,15 @@ class Music(object):
         return 'Instrument object with %s instruments' % len(self.instruments) # todo: make this more descriptive
 
     def __str__(self):
-        string = '\\version "2.18.2"'
+        string = '\\version "2.18.2"\n'
         # header
         if self.header:
-            string += '\\header {\n'
+            string += 'header {\n'
             string += '\n'.join(key + ' = ' + '"'+value+'"' for key, value in self.header.items())
             string += '\n}'
         # globals
         if self.globalparts:
-            string += '\\global = {\n'
+            string += 'global = {\n'
             string += '\n'.join(map(str, self.globalparts))
             string += '\n}'
         # instruments
