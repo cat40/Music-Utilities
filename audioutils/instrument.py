@@ -7,9 +7,9 @@ import lyutils
 sys.path.remove('..\\lyutils')
 
 '''
-:parameter
-:param
-
+future ideas:
+add some way to dectect tamber (piano is more percussive, etc)
+or force only using onsets detected from percussive waveform
 
 '''
 class Instrument(object):
