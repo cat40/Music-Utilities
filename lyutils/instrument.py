@@ -38,7 +38,7 @@ class Instrument(object):
         self.insName = name
         self.index = index
         if clef is None:
-            clef = clefs[name]
+            clef = clefs.setdefault(name, TREBLE)
         self.clef = clef
         self.useGlobal = useGlobal
         self.useRelative = useRelative  # wheter or not to include a \relative before the braces
