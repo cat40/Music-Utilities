@@ -68,22 +68,28 @@ class Instrument(object):
     a better way to do the dicionarys might be to use unique id's of lists as the keys, so that
     all values can be stored in the list and an average taken
     '''
-
-    def alignnotes(self, wholenote, tol=.5):
+    # todo: add rest detection (look for empty space after sorting
+    def alignnotes(self, wholenote, tol=.5, cutofffreq=3000):
         notesdict = {}
         newnotes = []
         for note in self.notes:
-            for (start, end, i), notes in notesdict.items():
+            if note.freq >= cutofffreq:
+                continue
+            if not notesdict:
+                notesdict[(note.start, note.end, 1)] = [note] # i might need to be 0
+                continue
+            for (start, end, i), notes in notesdict.copy().items(): # this is probably really ineffeicnet, to say the least
                 if start - tol <= note.start <= start + tol and end - tol <= note.end <= end + tol:
                     notesdict[(start, end, i)].append(note)
-                    notesdict[
-                        ((start * i + note.start) / (i + 1), (end * i + note.end) / (i + 1), i + 1)] = notesdict.pop(
-                        (start, end, i))
+                    notesdict[((start * i + note.start) / (i + 1), (end * i + note.end) / (i + 1), i + 1)] = notesdict.pop((start, end, i))
                 else:
                     notesdict[(note.start, note.end, 1)] = [note]
+        print(notesdict)
         ordernotes = collections.OrderedDict(sorted(notesdict.items(), key=lambda x : x[0][0]))
+        print(ordernotes)
         for (start, end, _), notes in ordernotes.items():
             newnotes.append(self.convertnote(notes, wholenote))
+        print(newnotes)
         return newnotes
 
     @classmethod
@@ -95,8 +101,9 @@ class Instrument(object):
         pitches = []
         for note in notes:
             step = steps[note.name[0]]
-            accidental = accidentals[note.name[1]] if note.name[1] in accidentals.keys() else 0
-            octave = int(note.name[-1])  # - 3?
+            accidental = accidentals[note.name[1]] if note.name[1] in accidentals.keys() else 0 # this might be broken
+            octave = int(note.name[-1]) - 3
+            print(step, accidental, octave)
             pitches.append(lyutils.Pitch(octave, step, accidental))
         return lyutils.Note(pitches, duration)
 

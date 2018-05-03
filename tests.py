@@ -11,7 +11,7 @@ def test(fname, instruments):
     a.getNotes()
     # a.outputNotes()
     testmus = a.toMusic(instruments)
-    print(str(testmus))
+    # print(str(testmus))
     testmus.write(os.path.join(RESULTSPATH, fname+'.ly'))  # todo: remove previous file extension before the .ly
 
 

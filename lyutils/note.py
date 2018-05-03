@@ -24,9 +24,9 @@ class Note(object):
 
     def __str__(self):
         if len(self.pitches) > 1:
-            string = '<' + ' '.join(self.pitches) + '>'
+            string = '<' + ' '.join(map(str, self.pitches)) + '>'
         else:
-            string = str(self.pitches)
+            string = str(map(str, self.pitches))
         return string + str(self.duration)
 
 
@@ -53,9 +53,9 @@ Arguments have been explained as I understand them, not nessesarily as implement
 class Pitch(lysrc.Pitch):
     def __init__(self, octave, step, alteration):
         super().__init__()
-        super().step = step  # step above c in the octave, where c = 0, d = 1, a=5, b=6, etc
-        super().octave = octave  # the octave of the note, where c3 is 0 and middle c is 1
-        super().alteration = alteration  # number of semitones above or below the step, I think
+        self.step = step  # step above c in the octave, where c = 0, d = 1, a=5, b=6, etc
+        self.octave = octave  # the octave of the note, where c3 is 0 and middle c is 1
+        self.alteration = alteration  # number of semitones above or below the step, I think
                                          # (1=sharp, 2=doublesharp, -1=flat, -2=double flat
 
     def __str__(self):
@@ -65,10 +65,10 @@ class Pitch(lysrc.Pitch):
 class Duration(lysrc.Duration):
     def __init__(self, duration_log, dots, factor=None):
         super().__init__()
-        super().duration_log = duration_log  # The duration as a log base 2 (quarter note = 2, whole note = 0, etc)
-        super().dots = dots  # number of dots
+        self.duration_log = duration_log  # The duration as a log base 2 (quarter note = 2, whole note = 0, etc)
+        self.dots = dots  # number of dots
         if factor is not None:
-            super().factor = factor  # todo: figure out what this does
+            self.factor = factor  # todo: figure out what this does
 
     def __str__(self):
         return repr(self)

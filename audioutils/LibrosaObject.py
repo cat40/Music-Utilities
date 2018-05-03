@@ -380,9 +380,6 @@ class LibrosaObject(object):
     def splittoinstruments(self, instruments):
         for instrument in instruments:
             instrument.notes = [note for note in self.notes if instrument.minnote <= note.freq <= instrument.maxnote]
-            print(instrument.notes)
-        print()
-        print(instruments[0].notes)
         return instruments  # not strictly necessary, as the instruments list will be modified in place
         # to avoid modifying in place, create a new Instrument object with the old instrument as the preset
 

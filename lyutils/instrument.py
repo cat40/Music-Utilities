@@ -48,13 +48,22 @@ class Instrument(object):
         if paramindex is None: self.index = index
         # self.PreviousPitch = None
 
+    @classmethod
+    def from_raw_notes(cls, notes, relative):
+        pass # todo put stuff from audioutils.convert in here, also solves import problem in audioutils importhing this
+
     def __str__(self):
-        lysrc.PreviousPitch = None
+        relative = self.relative if any(s in self.relative for s in 'abcdefg') else 'c' + self.relative
+        relPitch = lysrc.Pitch() # todo: un hardcode this (right now it's always relative to c4
+        relPitch.step=0
+        relPitch.octave=1
+        relPitch.alteration=0
+        lysrc.PreviousPitch = relPitch
         lysrc.relative_pitches = self.useRelative # might want to consider setting this back to its previous value after being done with it
         string = '%s = ' % self.name
         if self.useRelative:
             string += '\\relative '
-            string += self.relative if any(s in self.relative for s in 'abcdefg') else 'c'+self.relative # checks if self.relative is a whole note or just a pitch, and adds c if the later
+            string += relative # checks if self.relative is a whole note or just a pitch, and adds c if the later
             string += ' '
         string += '{\n'
         for thing in self.sequence:

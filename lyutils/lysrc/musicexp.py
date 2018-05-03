@@ -138,7 +138,7 @@ class Output_printer:
 
 class Duration:
     def __init__ (self):
-        self.duration_log = 0
+        self._duration_log = 0
         self.dots = 0
         self.factor = Rational (1)
 
@@ -148,6 +148,13 @@ class Duration:
                              self.factor.numerator (),
                              self.factor.denominator ())
 
+    @property
+    def duration_log(self):
+        return int(self._duration_log)
+
+    @duration_log.setter
+    def duration_log(self, value):
+        self._duration_log = value
 
     def ly_expression (self, factor = None, scheme_mode = False):
         if not factor:
@@ -351,9 +358,9 @@ class Pitch:
         pitch_diff = (this_pitch_steps - previous_pitch_steps)
         previous_pitch = self
         if pitch_diff > 3:
-            return "'" * ((pitch_diff + 3) / 7)
+            return "'" * ((pitch_diff + 3) // 7)
         elif pitch_diff < -3:
-            return "," * ((-pitch_diff + 3) / 7)
+            return "," * ((-pitch_diff + 3) // 7)
         else:
             return ""
 
