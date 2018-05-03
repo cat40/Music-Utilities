@@ -26,7 +26,7 @@ class Note(object):
         if len(self.pitches) > 1:
             string = '<' + ' '.join(map(str, self.pitches)) + '>'
         else:
-            string = str(self.pitches)
+            string = str(self.pitches[0])
         return string + str(self.duration)
 
 
