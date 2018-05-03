@@ -124,3 +124,5 @@ VIOLIN = Instrument('g3', 'a7', 'violin')
 VIOLA = Instrument('c3', 'e6', 'viola')
 CELLO = Instrument('c2', 'c6', 'cello')
 BASS = Instrument('e1', 'c4', 'contrabass')
+
+PIANO = Instrument('a0', 'c8', 'acoustic grand')
