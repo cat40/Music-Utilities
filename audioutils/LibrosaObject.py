@@ -49,6 +49,7 @@ class LibrosaObject(object):
                 self.fname) + "'") if cachePathOverride is None else cachePathOverride
             self.cache = Cache(self._cachePath)
         self.beatframes = self.beattimes = self.tempo = None  # these will be initialized when thier functions are called
+        self.splitfuncs = {'octave': self.splitByOctave, 'fifth': self.splitByFifths}
 
     def getTempo(self):
         # probably will not catch tempo changes
@@ -104,7 +105,7 @@ class LibrosaObject(object):
     from the sine wave generator
     '''
 
-    def getOnsets(self, debug=False):
+    def getOnsets(self, method='fifth', debug=False):
         if self.usecache:
             try:
                 return self.cache.load('onsets')
@@ -114,36 +115,38 @@ class LibrosaObject(object):
         harmonic, percussive = self.splitHarmonicPercussive()  # test this, also seems to take a very long time. Consider making the defenition of a perucssive sound more strict(see librosa docs)
         # split remaining by frequency (make sure the above isn't good enough first
         onsetsP = self.onsets_helper(percussive, self.samplingrate)
-        onsets.append((onsetsP, percussive))
-        # numpy.concatenate([onsets, (onsetsP, percussive)])
-        for i, y in enumerate(self.splitByFifths(y=harmonic)):
-            onsets_i = self.onsets_helper(y, self.samplingrate)
-            # numpy.concatenate([onsets, (onsets_i, y)])
-            onsets.append((onsets_i, y))
-            if debug:
-                clicks = librosa.core.clicks(frames=librosa.core.samples_to_frames(onsets_i), sr=self.samplingrate,
-                                             click_freq=220)
-                librosa.output.write_wav(os.path.join('tests\\results',
-                                                      os.path.splitext(os.path.basename(self.fname))[
-                                                          0] + '_onsets_octave_%s.wav' % i), clicks, self.samplingrate)
-        if debug:
-            librosa.output.write_wav(os.path.join('tests\\results', os.path.splitext(os.path.basename(self.fname))[
-                0] + '_percussive.wav'), percussive, self.samplingrate)
-            librosa.output.write_wav(
-                os.path.join('tests\\results', os.path.splitext(os.path.basename(self.fname))[0] + '_harmonic.wav'),
-                harmonic, self.samplingrate)
-            clicks = librosa.core.clicks(frames=librosa.core.samples_to_frames(onsetsP), sr=self.samplingrate,
-                                         click_freq=220)
-            librosa.output.write_wav(
-                os.path.join('tests\\results', os.path.splitext(os.path.basename(self.fname))[0] + '_onsets_p.wav'),
-                clicks, self.samplingrate)
-        if self.usecache:
-            self.cache.write(onsets, 'onsets')
-        ##            self.cache.writeBatch((harmonic, 'harmonic'),
-        ##                                  (percussive, 'percussive'),
-        ##                                  (onsets, 'onsets'))
-
-        return onsets
+        #onsets.append((onsetsP, percussive))
+        # # numpy.concatenate([onsets, (onsetsP, percussive)])
+        # splitfunc = self.splitfuncs[method]
+        # for i, y in enumerate(splitfunc(y=harmonic)):
+        #     onsets_i = self.onsets_helper(y, self.samplingrate)
+        #     # numpy.concatenate([onsets, (onsets_i, y)])
+        #     onsets.append((onsets_i, y))
+        #     if debug:
+        #         clicks = librosa.core.clicks(frames=librosa.core.samples_to_frames(onsets_i), sr=self.samplingrate,
+        #                                      click_freq=220)
+        #         librosa.output.write_wav(os.path.join('tests\\results',
+        #                                               os.path.splitext(os.path.basename(self.fname))[
+        #                                                   0] + '_onsets_octave_%s.wav' % i), clicks, self.samplingrate)
+        # if debug:
+        #     librosa.output.write_wav(os.path.join('tests\\results', os.path.splitext(os.path.basename(self.fname))[
+        #         0] + '_percussive.wav'), percussive, self.samplingrate)
+        #     librosa.output.write_wav(
+        #         os.path.join('tests\\results', os.path.splitext(os.path.basename(self.fname))[0] + '_harmonic.wav'),
+        #         harmonic, self.samplingrate)
+        #     clicks = librosa.core.clicks(frames=librosa.core.samples_to_frames(onsetsP), sr=self.samplingrate,
+        #                                  click_freq=220)
+        #     librosa.output.write_wav(
+        #         os.path.join('tests\\results', os.path.splitext(os.path.basename(self.fname))[0] + '_onsets_p.wav'),
+        #         clicks, self.samplingrate)
+        # if self.usecache:
+        #     self.cache.write(onsets, 'onsets')
+        # ##            self.cache.writeBatch((harmonic, 'harmonic'),
+        # ##                                  (percussive, 'percussive'),
+        # ##                                  (onsets, 'onsets'))
+        #
+        # return onsets
+        return [(onsetsP, harmonic)]
 
     def getOnsetsSimple(self, debug=False):
         if self.usecache:
@@ -335,7 +338,7 @@ class LibrosaObject(object):
             # apply a butterworth filter
             yield self.butter(fmin=minfreq, fmax=maxfreq, y=y)
 
-    def splitByFifths(self, y=None, octmin=1, octmax=9):
+    def splitByFifths(self, y=None, octmin=1, octmax=6):
         if y is None: y = self.waveform
         minfreq = librosa.core.note_to_hz('c' + str(octmin - 1))
         maxfreq = librosa.core.note_to_hz('c' + str(octmax))
@@ -448,12 +451,21 @@ class LibrosaObject(object):
     librosa.piptrack returns paralell arrays of pitches and magnitudes for each bin. Pitch at the max magnidute is the dominent pitch. 
     '''
 
-    @staticmethod
-    def getPitchCheap(y, sr, fmin=16, fmax=4000):
-        pitches, magnitudes = librosa.piptrack(y=y, sr=sr)
-        i = numpy.unravel_index(magnitudes.argmax(),
-                                magnitudes.shape)  # unravel_index transforms the bizzare integer returned by argmax into a tuple index
-        return pitches[i]
+    @classmethod
+    def getPitchCheap(cls, y, sr, depth = 2, fmin=16, fmax=4000):
+        for _ in range(depth):
+            pitches, magnitudes = librosa.piptrack(y=y, sr=sr)
+            i = numpy.unravel_index(magnitudes.argmax(),
+                                    magnitudes.shape)  # unravel_index transforms the bizzare integer returned by argmax into a tuple index
+            pitch = pitches[i]
+            # todo: break loop here on last iteration
+            # now look just at the waveform in the section of the predicted pitch
+            fmax = pitch + 440  # todo: make this a log scale
+            fmin = pitch - 440
+            print('filter', fmin, fmax)
+            filt = cls.helper_butter(sr, fmin, fmax)
+            y = signal.sosfiltfilt(filt, y)
+        return pitch
 
     @staticmethod
     def rmse(y):

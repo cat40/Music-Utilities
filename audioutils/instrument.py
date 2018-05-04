@@ -47,6 +47,13 @@ class Instrument(object):
         sequence = self.alignnotes(wholenote) # todo: determine time, tempo, and key changes and add to the sequence
         return lyutils.Instrument(self.name, sequence)
 
+    def convertSimple(self, base):
+        if isinstance(base, int):
+            # might want to do this part before separating into instruments
+            base = (base, sum(note.duration for note in self.notes) / len(self.notes))
+        wholenote = base[0] * base[1]
+        sequence = list(map(lambda x : self.convertnote([x], wholenote), sorted(self.notes, key=lambda x : x.start)))
+        return lyutils.Instrument(self.name, sequence)
 
 
     '''
@@ -98,26 +105,29 @@ class Instrument(object):
         accidentals = {'#': 1, 'b': -1}
         steps = {'C': 0, 'D': 1, 'E': 2, 'F': 3, 'G': 4, 'A': 5, 'B': 6}
         duration = sum(note.duration for note in notes) / len(notes)
-        duration = lyutils.Duration(*cls.tonearest(((duration / wholenote))))
+        nearest = cls.tonearest(((duration / wholenote)))
+        print(nearest[0])
+        if nearest[0] > 256:
+            print('error')
+            return '' #None would pollute the ly file
+        duration = lyutils.Duration(math.log(nearest[0], 2), nearest[1])
         print(duration)
         vols = [note.volume for note in notes]
+        pitches = []
         for note in notes:
-            break
-        note = notes[vols.index(max(vols))]
-        step = steps[note.name[0]]
-        accidental = accidentals[note.name[1]] if note.name[1] in accidentals.keys() else 0 # this might be broken
-        octave = int(note.name[-1]) - 3
-            # print(step, accidental, octave)
-            # pitches.append(lyutils.Pitch(octave, step, accidental))
-        pitch = lyutils.Pitch(octave, step, accidental)
-        return lyutils.Note([pitch], duration)
+            step = steps[note.name[0]]
+            accidental = accidentals[note.name[1]] if note.name[1] in accidentals.keys() else 0 # this might be broken
+            octave = int(note.name[-1]) - 3
+            print(step, accidental, octave)
+            pitches.append(lyutils.Pitch(octave, step, accidental))
+        return lyutils.Note(pitches, duration)
 
     # finds the nearest power of 2 to the number i
     @staticmethod
     def tonearest(i, tol=.05):
         print(i)
         log = math.log(i, 2)
-        nearest = 1 << -int(round(log, 0))  # 2**(round(log, 0))
+        nearest = 2 ** -int(round(log, 0))  # 2**(round(log, 0))
         if nearest-tol < log < nearest+tol: #this might be backwards? doesn't work yet, I dont' think
             return nearest, 1
         return nearest, 0  # todo: add support for double dotted notes

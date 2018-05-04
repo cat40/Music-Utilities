@@ -6,6 +6,10 @@ from audioutils import VIOLIN, VIOLA, CELLO, PIANO
 TESTPATH = '.\\tests\\'
 RESULTSPATH = '.\\tests\\results\\'
 
+'''
+TODO: add presets for each instrument to determine how onsets should be detected and what pitches to convert to notes
+'''
+
 def test(fname, instruments, output=True):
     a = audioutils.LibrosaObject(os.path.join(TESTPATH, fname))
     a.getNotes()
@@ -18,5 +22,5 @@ def test(fname, instruments, output=True):
 
 instruments = [VIOLIN, CELLO]
 # test('15 Romantic Flight.mp3', instruments, False)
-# test('26 Battle Cry of Freedom.mp3', [PIANO], True)
-test('cmajor.wav', instruments, True)
+test('26 Battle Cry of Freedom.mp3', [PIANO], True)
+# test('cmajor.wav', instruments, True)

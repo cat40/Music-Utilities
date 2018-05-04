@@ -12,7 +12,7 @@ class Music(object):
                               # might actaully be able to import lilypond source code and use that to check if the keys are valid
         self.globalparts = globalparts if globalparts is not None else []
         # if a global base is better than local ones, impliment it here
-        self.instruments = instruments if isinstance(instruments[0], Instrument) else [instrument.convert(basenote) for instrument in instruments]
+        self.instruments = instruments if isinstance(instruments[0], Instrument) else [instrument.convertSimple(basenote) for instrument in instruments]
 
     def __repr__(self):
         return 'Instrument object with %s instruments' % len(self.instruments) # todo: make this more descriptive
