@@ -70,7 +70,7 @@ class Instrument(object):
     '''
     # todo: add rest detection (look for empty space after sorting
     # this method will fail if there are simultanious notes of different length on the same instrument
-    def alignnotes(self, wholenote, tol=.5, cutofffreq=3000, cutoffvol=.01):
+    def alignnotes(self, wholenote, tol=5, cutofffreq=3000, cutoffvol=.025):
         notesdict = {}
         newnotes = []
         for note in self.notes:
@@ -98,22 +98,27 @@ class Instrument(object):
         accidentals = {'#': 1, 'b': -1}
         steps = {'C': 0, 'D': 1, 'E': 2, 'F': 3, 'G': 4, 'A': 5, 'B': 6}
         duration = sum(note.duration for note in notes) / len(notes)
-        duration = lyutils.Duration(*cls.tonearest(duration / wholenote))
-        pitches = []
+        duration = lyutils.Duration(*cls.tonearest(((duration / wholenote))))
+        print(duration)
+        vols = [note.volume for note in notes]
         for note in notes:
-            step = steps[note.name[0]]
-            accidental = accidentals[note.name[1]] if note.name[1] in accidentals.keys() else 0 # this might be broken
-            octave = int(note.name[-1]) - 3
-            print(step, accidental, octave)
-            pitches.append(lyutils.Pitch(octave, step, accidental))
-        return lyutils.Note(pitches, duration)
+            break
+        note = notes[vols.index(max(vols))]
+        step = steps[note.name[0]]
+        accidental = accidentals[note.name[1]] if note.name[1] in accidentals.keys() else 0 # this might be broken
+        octave = int(note.name[-1]) - 3
+            # print(step, accidental, octave)
+            # pitches.append(lyutils.Pitch(octave, step, accidental))
+        pitch = lyutils.Pitch(octave, step, accidental)
+        return lyutils.Note([pitch], duration)
 
     # finds the nearest power of 2 to the number i
     @staticmethod
-    def tonearest(i, tol=.25):
+    def tonearest(i, tol=.05):
+        print(i)
         log = math.log(i, 2)
-        nearest = 2**(round(log, 0))
-        if nearest-tol < log < nearest+tol:
+        nearest = 1 << -int(round(log, 0))  # 2**(round(log, 0))
+        if nearest-tol < log < nearest+tol: #this might be backwards? doesn't work yet, I dont' think
             return nearest, 1
         return nearest, 0  # todo: add support for double dotted notes
 

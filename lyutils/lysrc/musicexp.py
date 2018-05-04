@@ -170,15 +170,11 @@ class Duration:
         else:
             str = '%d' % (1 << self.duration_log)
         str += '.' * self.dots
-
-        print(factor, Rational(1, 1))
-        print(factor == Rational(1, 1))
         if factor != Rational(1, 1):
             if factor.denominator() != 1:
                 str += '*%d/%d' % (factor.numerator(), factor.denominator())
             else:
                 str += '*%d' % factor.numerator()
-
         return str
 
     def print_ly(self, outputter):

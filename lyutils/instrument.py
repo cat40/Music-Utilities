@@ -22,6 +22,7 @@ A class for putting instruments into lilypond
     TODO: add support for multi-staff insturments, like piano
     TODO: add midi stuff
     TODO: modify lysrc Pitch to better impliment previous pitch being stored in the insturment
+    TODO: check if note needs to be tied across measures
     The parameter name must be a valid midi name
 '''
 class Instrument(object):
@@ -75,14 +76,14 @@ class Instrument(object):
 
     def staffblock(self):
         string = self.name + 'Part' + ' = \\new Staff \\with {\n'
-        string += 'InstrumentName = "' + self.displayname + '"\n'
+        string += 'instrumentName = "' + self.displayname + '"\n'
         string += 'midiInstrument = "' + self.midiname + '"\n'
         string += '}' + '\\' + self.name
         return string
 
     @property
     def name(self):
-        return (self.insName + romannumerals(self.index)).strip(' ')
+        return (self.insName + romannumerals(self.index)).replace(' ', '')
 
     @property
     def displayname(self):

@@ -36,7 +36,7 @@ class Music(object):
         # score block
         string += '\n\n\\score {\n<<\n'
         for instrument in self.instruments:
-            string += '\\'+instrument.name+'\n'
+            string += '\\'+instrument.name+'Part\n'
         string += '>>\n\\layout {}\n\\midi {}\n}'
         return string
 

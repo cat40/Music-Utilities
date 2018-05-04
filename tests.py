@@ -18,4 +18,5 @@ def test(fname, instruments, output=True):
 
 instruments = [VIOLIN, CELLO]
 # test('15 Romantic Flight.mp3', instruments, False)
-test('26 Battle Cry of Freedom.mp3', [PIANO], True)
+# test('26 Battle Cry of Freedom.mp3', [PIANO], True)
+test('cmajor.wav', instruments, True)
