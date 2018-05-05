@@ -460,9 +460,10 @@ class LibrosaObject(object):
             pitch = pitches[i]
             # todo: break loop here on last iteration
             # now look just at the waveform in the section of the predicted pitch
-            fmax = pitch + 440  # todo: make this a log scale
-            fmin = pitch - 440
-            print('filter', fmin, fmax)
+            radius = .25
+            fmax = pitch * (1+radius)
+            fmin = pitch * (1-radius)
+            print('filter', fmin, fmax, pitch)
             filt = cls.helper_butter(sr, fmin, fmax)
             y = signal.sosfiltfilt(filt, y)
         return pitch
@@ -479,6 +480,11 @@ class LibrosaObject(object):
     @staticmethod
     def normalizeNote(freq):
         return librosa.core.note_to_hz(librosa.core.hz_to_note(freq))
+
+    @staticmethod
+    def getOctave(freq, base=440):  # base is what will be considered octave 0. right now it's a-4, so a-g4 is octave 0
+        return int(math.log(freq/base, 2))
+
 
     @staticmethod
     # a wrapper for librosa.onset.onset_detect
