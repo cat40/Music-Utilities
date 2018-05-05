@@ -1,18 +1,3 @@
-#everything else
-*
-
-!.gitignore
-!audioutils/
-!audioutils/*
-!lyutils/
-!lyutils/*
-!lyutils/lysrc/
-!lyutils/lysrc/*
-!audioutilspy2/
-!audioutilspy2/*
-audioutilspy2/cache
-!tests.py
-
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -112,3 +97,15 @@ ENV/
 
 # mypy
 .mypy_cache/
+
+#other stuff
+cache
+cache/*
+crap
+crap/*
+docs
+docs/*
+tests
+tests/*
+.idea
+.idea/*
