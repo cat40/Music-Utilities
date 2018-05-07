@@ -2,7 +2,7 @@ import mido
 
 class Note(object):
     def __init__(self, note, start, end):
-        self.note = note
+        self.note = int(note)
         self.start = start
         self.end = end
 
