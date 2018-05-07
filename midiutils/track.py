@@ -12,8 +12,6 @@ class Track(object):
         self.tempo = mido.bpm2tempo(tempo)
         self.tracknum = globalnum
         globalnum += 1 if globalnum != 9 else 2  # skips 10 (percussion reserved)
-        for note in notes:
-            note.setTime(self.tempo)
         self.timesig = time
         self.key = key
         self._messages = [mido.MetaMessage('set_tempo', time=0, tempo=tempo),
@@ -24,7 +22,8 @@ class Track(object):
 
     @property
     def messages(self):
-        messages = self._messages + [message for note in self.notes for message in note.message(self.resolution)]
+        messages = self._messages + \
+                   [message for note in self.notes for message in note.message(self.resolution, self.tempo)]
         for message in messages:
             message.channel = self.tracknum
         return messages
