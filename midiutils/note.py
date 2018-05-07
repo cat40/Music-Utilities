@@ -6,5 +6,6 @@ class Note(object):
         self.start = start
         self.end = end
 
-    def message(self):
-        return (mido.Message('note_on', note=self.note, time=self.start), mido.Message('note_off', note=self.note, time=self.end))
+    def message(self, resolution):
+        return (mido.Message('note_on', note=self.note, time=mido.second2tick(self.start)),
+                mido.Message('note_off', note=self.note, time=mido.second2tick(self.end)))
