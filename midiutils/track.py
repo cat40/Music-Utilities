@@ -25,7 +25,8 @@ class Track(object):
         messages = self._messages + \
                    [message for note in self.notes for message in note.message(self.resolution, self.tempo)]
         for message in messages:
-            message.channel = self.tracknum
+            if not message.is_meta:
+                message.channel = self.tracknum
         return messages
 
     def miditrack(self):
