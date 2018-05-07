@@ -11,6 +11,6 @@ class Music(object):
     def file(self, fname):
         midif = mido.MidiFile(type=1)
         for track in self.tracks:
-            midif.tracks.append(track.midiTrack())
+            midif.tracks.append(track.miditrack())
         midif.save(fname)
 
