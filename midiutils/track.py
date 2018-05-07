@@ -15,7 +15,7 @@ class Track(object):
         self.timesig = time
         self.key = key
         self._messages = [mido.MetaMessage('set_tempo', time=0, tempo=tempo),
-                          mido.MetaMessage('time_signature', time=0, numerator=time[0], demoninator=time[1]),
+                          mido.MetaMessage('time_signature', time=0, numerator=time[0], denominator=time[1]),
                           mido.MetaMessage('key_signature', time=0, key=key)]
         self.notes = notes
         self.resolution = resolution  # this should probably actually be in music
@@ -27,3 +27,6 @@ class Track(object):
         for message in messages:
             message.channel = self.tracknum
         return messages
+
+    def miditrack(self):
+        return mido.MidiTrack().extend(self.messages)
