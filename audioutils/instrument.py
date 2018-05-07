@@ -1,13 +1,15 @@
 import collections
 import math
-
 import librosa
 from librosa import note_to_hz
 import sys
 import copy
 sys.path.append('..\\midiutils') # todo: reweite this to use importlib instead
+sys.path.append('..\\lyutils')
 import midiutils
+import lyutils
 sys.path.remove('..\\midiutils')
+sys.path.remove('..\\lyutils')
 
 '''
 future ideas:
@@ -19,7 +21,7 @@ class Instrument(object):
     def __init__(self, tempo, minnote=None, maxnote=None, name=None, preset=None, notes: list=None):
         self.tempo = tempo
         if preset is not None:
-            self = copy.deepcopy(preset)
+            self.__dict__ = copy.deepcopy(preset.__dict__)
             return
         if not(minnote is not None and maxnote is not None and name is not None):
             raise ValueError('Not all parameters were specified')
@@ -147,6 +149,8 @@ class Instrument(object):
 class Preset(Instrument):
     def __init__(self, minnote, maxnote, name):
         super().__init__(None, minnote, maxnote, name)
+
+
 # presets:
 # pitches are the sounded pitch, not the written pitch
 VIOLIN = Preset('g3', 'a7', 'violin')
