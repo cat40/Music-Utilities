@@ -140,11 +140,11 @@ class Instrument(object):
             return nearest, 1
         return nearest, 0  # todo: add support for double dotted notes
 
-    def tomiditrack(self, tempo, time=(4, 4), key='C'):
+    def tomiditrack(self, time=(4, 4), key='C'):
         notes = []
         for note in self.notes:
             notes.append(midiutils.Note(librosa.core.hz_to_midi(note.freq), note.start, note.end))
-        return midiutils.Track(tempo, notes, time=time, key=key)
+        return midiutils.Track(self.tempo, notes, time=time, key=key)
 
 
 class Preset(Instrument):
