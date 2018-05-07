@@ -1,11 +1,13 @@
 import collections
 import math
+
+import librosa
 from librosa import note_to_hz
 import sys
 import copy
-sys.path.append('..\\lyutils') # todo: reweite this to use importlib instead
-import lyutils
-sys.path.remove('..\\lyutils')
+sys.path.append('..\\midiutils') # todo: reweite this to use importlib instead
+import midiutils
+sys.path.remove('..\\midiutils')
 
 '''
 future ideas:
@@ -135,6 +137,12 @@ class Instrument(object):
         if nearest-tol < log < nearest+tol: #this might be backwards? doesn't work yet, I dont' think
             return nearest, 1
         return nearest, 0  # todo: add support for double dotted notes
+
+    def totrack(self, tempo, time=(4, 4), key='C'):
+        notes = []
+        for note in self.notes:
+            notes.append(midiutils.Note(librosa.core.hz_to_midi(note.freq), note.start, note.end))
+        return midiutils.Track(tempo, notes, time=time, key = key)
 
 class Preset(Instrument):
     def __init__(self, minnote, maxnote, name):
