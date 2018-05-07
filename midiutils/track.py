@@ -31,5 +31,5 @@ class Track(object):
 
     def miditrack(self):
         track = mido.MidiTrack()
-        track.extend([self.messages])
+        track.extend(self.messages)
         return track
