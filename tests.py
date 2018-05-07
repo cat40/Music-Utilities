@@ -2,6 +2,7 @@ import audioutils
 import os
 import lyutils # unused at the moment, but here to make sure the import works
 from audioutils import VIOLIN, VIOLA, CELLO, PIANO
+import midiutils
 
 TESTPATH = '.\\tests\\'
 RESULTSPATH = '.\\tests\\results\\'
@@ -15,9 +16,10 @@ def test(fname, instruments, output=True):
     a.getNotes()
     if output:
         a.outputNotes()
-    testmus = a.toMusic(instruments)
-    # print(str(testmus))
-    testmus.write(os.path.join(RESULTSPATH, fname+'.ly'))  # todo: remove previous file extension before the .ly
+    insts = a.splittoinstruments(instruments)
+    tracks = [inst.tomiditrack() for inst in insts]
+    music = midiutils.Music(tracks)
+    music.file(fname+'midi')
 
 
 instruments = [VIOLIN, CELLO]
