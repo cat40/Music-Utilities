@@ -19,7 +19,7 @@ def test(fname, instruments, output=True):
     insts = a.splittoinstruments(instruments)
     tracks = [inst.tomiditrack(65) for inst in insts]
     music = midiutils.Music(tracks)
-    music.file(fname+'midi')
+    music.file(os.path.join(RESULTSPATH, fname) + 'midi')
 
 
 instruments = [VIOLIN, CELLO]
