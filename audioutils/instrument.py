@@ -2,6 +2,7 @@ import collections
 import math
 from librosa import note_to_hz
 import sys
+import copy
 sys.path.append('..\\lyutils') # todo: reweite this to use importlib instead
 import lyutils
 sys.path.remove('..\\lyutils')
@@ -13,10 +14,12 @@ or force only using onsets detected from percussive waveform
 
 '''
 class Instrument(object):
-    def __init__(self, minnote=None, maxnote=None, name=None, preset=None, notes: list=None):
+    def __init__(self, tempo, minnote=None, maxnote=None, name=None, preset=None, notes: list=None):
+        self.tempo = tempo
         if preset is not None:
-            pass # todo: impliment getting stuff from the presets
-        elif not(minnote is not None and maxnote is not None and name is not None):
+            self = copy.deepcopy(preset)
+            return
+        if not(minnote is not None and maxnote is not None and name is not None):
             raise ValueError('Not all parameters were specified')
         self.minnote = minnote if isinstance(minnote, (int, float)) else note_to_hz(minnote)
         self.maxnote = maxnote if isinstance(maxnote, (int, float)) else note_to_hz(maxnote)
@@ -44,6 +47,7 @@ class Instrument(object):
             # might want to do this part before separating into instruments
             base = (base, sum(note.duration for note in self.notes) / len(self.notes))
         wholenote = base[0] * base[1]
+        wholenote = 4 / (self.tempo * 60)  # assumes tempo is in quarter note beats
         sequence = self.alignnotes(wholenote) # todo: determine time, tempo, and key changes and add to the sequence
         return lyutils.Instrument(self.name, sequence)
 
@@ -132,12 +136,14 @@ class Instrument(object):
             return nearest, 1
         return nearest, 0  # todo: add support for double dotted notes
 
-
+class Preset(Instrument):
+    def __init__(self, minnote, maxnote, name):
+        super().__init__(None, minnote, maxnote, name)
 # presets:
 # pitches are the sounded pitch, not the written pitch
-VIOLIN = Instrument('g3', 'a7', 'violin')
-VIOLA = Instrument('c3', 'e6', 'viola')
-CELLO = Instrument('c2', 'c6', 'cello')
-BASS = Instrument('e1', 'c4', 'contrabass')
+VIOLIN = Preset('g3', 'a7', 'violin')
+VIOLA = Preset('c3', 'e6', 'viola')
+CELLO = Preset('c2', 'c6', 'cello')
+BASS = Preset('e1', 'c4', 'contrabass')
 
-PIANO = Instrument('a0', 'c8', 'acoustic grand')
+PIANO = Preset('a0', 'c8', 'acoustic grand')
