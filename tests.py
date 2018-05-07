@@ -17,7 +17,7 @@ def test(fname, instruments, output=True):
     if output:
         a.outputNotes()
     insts = a.splittoinstruments(instruments)
-    tracks = [inst.tomiditrack() for inst in insts]
+    tracks = [inst.tomiditrack(65) for inst in insts]
     music = midiutils.Music(tracks)
     music.file(fname+'midi')
 
