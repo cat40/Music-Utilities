@@ -21,6 +21,17 @@ def test(fname, instruments, output=True):
     music = midiutils.Music(tracks)
     music.file(os.path.join(RESULTSPATH, fname) + 'midi')
 
+def testmidi():
+    from mido import Message, MidiFile, MidiTrack
+    mid = MidiFile()
+    track = MidiTrack()
+    mid.tracks.append(track)
+    track.append(Message('program_change', program=12, time=0))
+    track.append(Message('note_on', note=64, velocity=64, time=32))
+    track.append(Message('note_off', note=64, velocity=127, time=32))
+    mid.save(os.path.join(RESULTSPATH, 'new_song.mid'))
+
+testmidi()
 
 instruments = [VIOLIN, CELLO]
 # test('15 Romantic Flight.mp3', instruments, False)
