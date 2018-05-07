@@ -19,10 +19,11 @@ or force only using onsets detected from percussive waveform
 '''
 class Instrument(object):
     def __init__(self, tempo, minnote=None, maxnote=None, name=None, preset=None, notes: list=None):
-        self.tempo = tempo
         if preset is not None:
             self.__dict__ = copy.deepcopy(preset.__dict__)
+            self.tempo = tempo
             return
+        self.tempo = tempo
         if not(minnote is not None and maxnote is not None and name is not None):
             raise ValueError('Not all parameters were specified')
         self.minnote = minnote if isinstance(minnote, (int, float)) else note_to_hz(minnote)

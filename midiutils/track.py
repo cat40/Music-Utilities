@@ -30,4 +30,6 @@ class Track(object):
         return messages
 
     def miditrack(self):
-        return mido.MidiTrack().extend(self.messages)
+        track = mido.MidiTrack()
+        track.extend([self.messages])
+        return track

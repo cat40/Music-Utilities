@@ -1,7 +1,7 @@
 import audioutils
 import os
 import lyutils # unused at the moment, but here to make sure the import works
-from audioutils import VIOLIN, VIOLA, CELLO, PIANO
+from audioutils import VIOLIN, VIOLA, CELLO, PIANO, Instrument
 import midiutils
 
 TESTPATH = '.\\tests\\'
@@ -17,7 +17,7 @@ def test(fname, instruments, output=True):
     if output:
         a.outputNotes()
     insts = a.splittoinstruments(instruments)
-    tracks = [inst.tomiditrack(65) for inst in insts]
+    tracks = [inst.tomiditrack() for inst in insts]
     music = midiutils.Music(tracks)
     music.file(os.path.join(RESULTSPATH, fname) + 'midi')
 
@@ -35,5 +35,5 @@ testmidi()
 
 instruments = [VIOLIN, CELLO]
 # test('15 Romantic Flight.mp3', instruments, False)
-test('26 Battle Cry of Freedom.mp3', [PIANO], True)
+test('26 Battle Cry of Freedom.mp3', [Instrument(65, preset=PIANO)], True)
 # test('cmajor.wav', instruments, True)
