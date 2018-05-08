@@ -109,3 +109,5 @@ tests
 tests/*
 .idea
 .idea/*
+bin/
+bin/*
