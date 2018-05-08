@@ -19,7 +19,7 @@ def test(fname, instruments, output=True):
     insts = a.splittoinstruments(instruments)
     tracks = [inst.tomiditrack() for inst in insts]
     music = midiutils.Music(tracks)
-    music.file(os.path.join(RESULTSPATH, fname) + 'midi')
+    music.file(os.path.join(RESULTSPATH, fname) + '.mid')
 
 def testmidi():
     from mido import Message, MidiFile, MidiTrack

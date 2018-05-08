@@ -463,7 +463,6 @@ class LibrosaObject(object):
             radius = .25
             fmax = pitch * (1+radius)
             fmin = pitch * (1-radius)
-            print('filter', fmin, fmax, pitch)
             filt = cls.helper_butter(sr, fmin, fmax)
             y = signal.sosfiltfilt(filt, y)
         return pitch
