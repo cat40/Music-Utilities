@@ -16,7 +16,7 @@ accidental: Whether the note is sharp or flat. Will be constants.LYSHARP or cons
 '''
 class Note(object):
     def __init__(self, pitches, duration, useRelative=True):
-        self.pitches = pitches if isinstance(pitches, list) else list(pitches)
+        self.pitches = pitches if isinstance(pitches, (list, tuple)) else [pitches]
         if isinstance(duration, Duration):
             self.duration = duration
         else:
