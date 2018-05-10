@@ -55,19 +55,26 @@ class Pitch(lysrc.Pitch):
 
     @classmethod
     def fromhz(cls, freq):
-        return cls.frommidi(librosa.core.hz_to_midi(freq))
+        return cls.frommidi(int(round(librosa.core.hz_to_midi(cls.normalizenote(freq)), 0)))
 
     @classmethod
     def frommidi(cls, midi):
+        print(midi)
         C = librosa.core.note_to_midi('c3')
         octave, halfstep = divmod(midi-C, 12)
+        octave = int(octave)
         step = min([0, 2, 4, 5, 7, 9, 11], key=lambda x : abs(x-halfstep))  # gets the nearest natural note
         alteration = halfstep-step  # the left over accidental
+        print(octave, step, alteration)
         return cls(octave, step, alteration)
 
 
     def __str__(self):
         return repr(self)
+
+    @staticmethod
+    def normalizenote(freq):
+        return librosa.core.note_to_hz(librosa.core.hz_to_note(freq))
 
 
 class Duration(lysrc.Duration):
