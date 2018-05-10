@@ -56,12 +56,17 @@ class Instrument(object):
         sequence = self.alignnotes(wholenote) # todo: determine time, tempo, and key changes and add to the sequence
         return lyutils.Instrument(self.name, sequence)
 
+    # todo: put these all in lyutils.instrument
     def convertSimple(self, base):
         if isinstance(base, int):
             # might want to do this part before separating into instruments
             base = (base, sum(note.duration for note in self.notes) / len(self.notes))
         wholenote = base[0] * base[1]
         sequence = list(map(lambda x : self.convertnote([x], wholenote), sorted(self.notes, key=lambda x : x.start)))
+        return lyutils.Instrument(self.name, sequence)
+
+    def convert2(self, tempo):
+        sequence = list(map(lambda x : lyutils.Note.fromAudioutils(tempo, x), sorted(self.notes, key=lambda x : x.start)))
         return lyutils.Instrument(self.name, sequence)
 
 

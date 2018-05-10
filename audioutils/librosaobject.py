@@ -1,4 +1,5 @@
 # from pygame import mixer  # this is a little slow, see if another dedicated module would be faster
+import copy
 import os
 import librosa
 from scipy import signal
@@ -452,7 +453,8 @@ class LibrosaObject(object):
     '''
 
     @classmethod
-    def getPitchCheap(cls, y, sr, depth = 2, fmin=16, fmax=4000):
+    def getPitchCheap(cls, y, sr, depth=2, fmin=16, fmax=4000):
+        y = copy.deepcopy(y)
         for _ in range(depth):
             pitches, magnitudes = librosa.piptrack(y=y, sr=sr)
             i = numpy.unravel_index(magnitudes.argmax(),

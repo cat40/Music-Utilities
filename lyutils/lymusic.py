@@ -6,13 +6,14 @@ class Music(object):
     \header{} thing
     @globals is a list of lyObj that go in the global section
     '''
-    def __init__(self, instruments, header=None, globalparts=None, midi=True, basenote=4):
+    def __init__(self, tempo, instruments, header=None, globalparts=None, midi=True, basenote=4):
         self.string = ''
         self.header = header if header is not None else {} # consider checking if the keys are valid, but that will be very hard to maintain as lilypond updates
                               # might actaully be able to import lilypond source code and use that to check if the keys are valid
         self.globalparts = globalparts if globalparts is not None else []
         # if a global base is better than local ones, impliment it here
-        self.instruments = instruments if isinstance(instruments[0], Instrument) else [instrument.convertSimple(basenote) for instrument in instruments]
+        self.instruments = instruments if isinstance(instruments[0], Instrument) \
+            else [instrument.convert2(tempo) for instrument in instruments]
 
     def __repr__(self):
         return 'Instrument object with %s instruments' % len(self.instruments) # todo: make this more descriptive

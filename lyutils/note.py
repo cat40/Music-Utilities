@@ -1,5 +1,6 @@
-from .constants import VALIDNOTEDURATIONS, STRNOTEDURATIONS
 from . import lysrc
+import math
+import librosa
 
 
 '''notes:
@@ -19,13 +20,17 @@ class Note(object):
         if isinstance(duration, Duration):
             self.duration = duration
         else:
-            self.duration = Duration(duration)
+            self.duration = Duration(duration, 0)  # assumes no dots. might add conversion from a different kind of integer later
         self.useRelative = useRelative
 
+    # todo: impliment doublestops
     @classmethod
-    def fromAudioutils(cls, notes):
-        notes = tuple(notes)
-        duration = note.toInt()
+    def fromAudioutils(cls, tempo, note):
+        # notes = tuple(notes)
+        duration = note.toInt(tempo)
+        duration = Duration(math.log(duration, 2), 0)
+        pitch = Pitch.fromhz(note.freq)
+        return cls(pitch, duration)
 
     def __str__(self):
         if len(self.pitches) > 1:
@@ -48,8 +53,21 @@ class Pitch(lysrc.Pitch):
         self.alteration = alteration  # number of semitones above or below the step, I think
                                          # (1=sharp, 2=doublesharp, -1=flat, -2=double flat
 
+    @classmethod
+    def fromhz(cls, freq):
+        return cls.frommidi(librosa.core.hz_to_midi(freq))
+
+    @classmethod
+    def frommidi(cls, midi):
+        C = librosa.core.note_to_midi('c3')
+        octave, halfstep = divmod(midi-C, 12)
+        step = min([0, 2, 4, 5, 7, 9, 11], key=lambda x : abs(x-halfstep))  # gets the nearest natural note
+        alteration = halfstep-step  # the left over accidental
+        return cls(octave, step, alteration)
+
+
     def __str__(self):
-        return repr(self)  # todo this might need to be super instead of self, see how it works
+        return repr(self)
 
 
 class Duration(lysrc.Duration):

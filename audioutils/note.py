@@ -42,6 +42,7 @@ class Note(object):
     tempo can be a number or a tuple (bpm, note_base) where note_base is the note that gets the beat
     If tempo is a single number, quarter note base will be assumed
     TODO: add support for dotted notes
+    this might end up as a class method of Duration in lyutils later
     '''
     def toInt(self, tempo):
         # convert an integer tempo to a tuple tempo (assumes quarter note base
