@@ -105,8 +105,8 @@ crap
 crap/*
 docs
 docs/*
-tests
-tests/*
+testsp
+testsp/*
 .idea
 .idea/*
 bin/
