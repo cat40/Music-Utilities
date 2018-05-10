@@ -35,5 +35,6 @@ testmidi()
 
 instruments = [VIOLIN, CELLO]
 # test('15 Romantic Flight.mp3', instruments, False)
-test('26 Battle Cry of Freedom.mp3', [Instrument(65, preset=PIANO)], True)
+# test('26 Battle Cry of Freedom.mp3', [Instrument(65, preset=PIANO)], True)
 # test('cmajor.wav', instruments, True)
+test('cmajorpiano.wav', [Instrument(120, preset=PIANO)], True)

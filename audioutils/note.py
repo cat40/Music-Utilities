@@ -36,3 +36,17 @@ class Note(object):
 
     def __repr__(self):
         return ' '.join(map(str, (self.freq, self.name, self.duration)))
+
+    '''
+    parameters:
+    tempo can be a number or a tuple (bpm, note_base) where note_base is the note that gets the beat
+    If tempo is a single number, quarter note base will be assumed
+    TODO: add support for dotted notes
+    '''
+    def toInt(self, tempo):
+        # convert an integer tempo to a tuple tempo (assumes quarter note base
+        if isinstance(tempo, (float, int)):
+            tempo = tempo, 4
+        secondsPerBeat = 60/tempo[0]
+        numBeats = self.duration / secondsPerBeat
+        return int((1/numBeats) * tempo[1])

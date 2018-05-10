@@ -1,4 +1,4 @@
-from .LibrosaObject import LibrosaObject
-from .Note import Note
+from .librosaobject import LibrosaObject
+from .note import Note
 from .exceptions import *
 from .instrument import *

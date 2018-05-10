@@ -6,8 +6,8 @@ import numpy
 import math
 
 import lyutils
-from .Cache import Cache
-from .Note import Note
+from .cache import Cache
+from .note import Note
 from numpy import pi, polymul
 from scipy.signal import bilinear
 
