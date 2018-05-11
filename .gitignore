@@ -111,3 +111,5 @@ testsp/*
 .idea/*
 bin/
 bin/*
+tests/results
+tests/results/*
