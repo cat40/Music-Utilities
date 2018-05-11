@@ -37,6 +37,7 @@ def testmidi():
     mid.save(os.path.join(RESULTSPATH, 'new_song.mid'))
 
 def testly(fname, instruments, tempo, output=True, prop=False):
+    print(fname)
     testpath = '.\\testsp\\' if prop else TESTPATH
     resultspath = '.\\testsp\\results' if prop else RESULTSPATH
     a = audioutils.LibrosaObject(os.path.join(testpath, fname))
