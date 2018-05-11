@@ -453,8 +453,10 @@ class LibrosaObject(object):
     '''
 
     @classmethod
-    def getPitchCheap(cls, y, sr, depth=2, fmin=16, fmax=4000):
+    def getPitchCheap(cls, y, sr, depth=1, fmin=16, fmax=4000):
         y = copy.deepcopy(y)
+        filt = cls.helper_butter(sr, fmin, fmax)
+        y = signal.sosfiltfilt(filt, y)
         for _ in range(depth):
             pitches, magnitudes = librosa.piptrack(y=y, sr=sr)
             i = numpy.unravel_index(magnitudes.argmax(),

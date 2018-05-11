@@ -61,13 +61,16 @@ class Pitch(lysrc.Pitch):
     def frommidi(cls, midi):
         print(midi)
         C = librosa.core.note_to_midi('c3')
+        midilist = [0, 2, 4, 5, 7, 9, 11]
+        mididict = dict(zip(midilist, range(6+1)))
         octave, halfstep = divmod(midi-C, 12)
         octave = int(octave)
-        step = min([0, 2, 4, 5, 7, 9, 11], key=lambda x : abs(x-halfstep))  # gets the nearest natural note
+        # todo change step to be the lilypond step number, not the midi number (probably use a dictionary)
+        step = min(midilist, key=lambda x : abs(x-halfstep))  # gets the nearest natural note
         alteration = halfstep-step  # the left over accidental
+        step = mididict[step]
         print(octave, step, alteration)
         return cls(octave, step, alteration)
-
 
     def __str__(self):
         return repr(self)
