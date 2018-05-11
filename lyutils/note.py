@@ -52,6 +52,7 @@ class Pitch(lysrc.Pitch):
         self.octave = octave  # the octave of the note, where c3 is 0 and middle c is 1
         self.alteration = alteration  # number of semitones above or below the step, I think
                                          # (1=sharp, 2=doublesharp, -1=flat, -2=double flat
+        self.relative_pitch = False
 
     @classmethod
     def fromhz(cls, freq):
@@ -65,7 +66,6 @@ class Pitch(lysrc.Pitch):
         mididict = dict(zip(midilist, range(6+1)))
         octave, halfstep = divmod(midi-C, 12)
         octave = int(octave)
-        # todo change step to be the lilypond step number, not the midi number (probably use a dictionary)
         step = min(midilist, key=lambda x : abs(x-halfstep))  # gets the nearest natural note
         alteration = halfstep-step  # the left over accidental
         step = mididict[step]
