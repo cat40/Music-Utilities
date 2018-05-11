@@ -67,11 +67,26 @@ def findOctave(y, sr, note):
     '''
     :param y: waveform to get pitch on
     :param sr: sampling rate of the waveform
-    :param note: the number of half-steps away of c (0-12, where 12 is B#/Cb)
-    :return: The octave number, where octave 3 (of c3) is 0
+    :param note: the frequency of the detected pitch
+    :return: the corrected pitch
+
+    Adapted from https://github.com/ad1269/Monophonic-Pitch-Detection
     '''
+    threshold = .9
     pass
 
+
+def autocorrelate(y, n=2):
+    '''
+    :param y: waveform to be autocorrelated (numpy array)
+    :param n: the number of times to perform an autocorrelation
+    :return: the nth autocorrelation of y
+    adapted from https://dsp.stackexchange.com/a/388
+    '''
+    prevAutocorr = numpy.fft.rfft(y)
+    for _ in range(n):
+        prevAutocorr = prevAutocorr*numpy.conj(prevAutocorr)
+    return numpy.fft.irfft(prevAutocorr)
 
 # just a wrapper for scipy.signal.butter for readability
 def helper_butter(sr, fmin=0, fmax=None, order=6, output='sos'):
