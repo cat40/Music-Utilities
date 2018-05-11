@@ -8,7 +8,7 @@ from scipy import signal
 '''
 A collection of static methods for dealing with pitch
 '''
-
+# todo: make a single pitch function with a method argument
 
 # copied from https://gist.github.com/endolith/148112
 def A_weighting(fs):
@@ -63,7 +63,14 @@ def getPitchCheap(y, sr, depth=1, fmin=16, fmax=4000):
         filt = helper_butter(sr, fmin, fmax)
         y = signal.sosfiltfilt(filt, y)
 
-def findOctave(y, sr, note):
+
+def pitchFromAC(y):
+    autocorrelation = autocorrelate(y)
+
+
+
+
+def findOctave(y, note):
     '''
     :param y: waveform to get pitch on
     :param sr: sampling rate of the waveform
@@ -84,6 +91,7 @@ def autocorrelate(y, n=2):
     adapted from https://dsp.stackexchange.com/a/388
     '''
     prevAutocorr = numpy.fft.rfft(y)
+    print(len(y), len(prevAutocorr))
     for _ in range(n):
         prevAutocorr = prevAutocorr*numpy.conj(prevAutocorr)
     return numpy.fft.irfft(prevAutocorr)
