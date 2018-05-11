@@ -52,7 +52,7 @@ class Pitch(lysrc.Pitch):
         self.octave = octave  # the octave of the note, where c3 is 0 and middle c is 1
         self.alteration = alteration  # number of semitones above or below the step, I think
                                          # (1=sharp, 2=doublesharp, -1=flat, -2=double flat
-        self.relative_pitch = False
+        self._force_absolute_pitch = True
 
     @classmethod
     def fromhz(cls, freq):
