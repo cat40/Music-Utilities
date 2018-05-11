@@ -36,20 +36,22 @@ def testmidi():
     mid.tracks.append(track)
     mid.save(os.path.join(RESULTSPATH, 'new_song.mid'))
 
-def testly(fname, instruments, tempo, output=True):
-    a = audioutils.LibrosaObject(os.path.join(TESTPATH, fname))
+def testly(fname, instruments, tempo, output=True, prop=False):
+    testpath = '.\\testsp\\' if prop else TESTPATH
+    resultspath = '.\\testsp\\results' if prop else RESULTSPATH
+    a = audioutils.LibrosaObject(os.path.join(testpath, fname))
     a.getNotes()
     if output:
         a.outputNotes()
     insts = a.splittoinstruments(instruments)
     music = lyutils.Music(tempo, insts)
-    music.write(os.path.join(RESULTSPATH, fname+'.ly'))
+    music.write(os.path.join(resultspath, fname+'.ly'))
 
 testmidi()
 
 instruments = [VIOLIN, CELLO]
 # test('15 Romantic Flight.mp3', instruments, False)
-# test('26 Battle Cry of Freedom.mp3', [Instrument(65, preset=PIANO)], True)
+testly('26 Battle Cry of Freedom.mp3', [Instrument(65, preset=PIANO)], True, prop=True)
 # test('cmajor.wav', instruments, True)
 testly('cmajorpiano.wav', [Instrument(60, preset=PIANO)], 60, True)  # todo figure out why tempo is in both audioutils.Instrument and lyutils.music
 testly('4 strings pizz.wav', [Instrument(80, preset=VIOLA)], 80, True)
