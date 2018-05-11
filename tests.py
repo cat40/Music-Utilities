@@ -55,7 +55,7 @@ def testly(fname, instruments, tempo, output=True, prop=False):
 
 def testInternals(fname):
     y, sr = librosa.load(os.path.join(TESTPATH, fname))
-    print(len(audioutils.pitchfs.autocorrelate(y)))
+    audioutils.pitchfs.autocorrelate(y)
 
 testmidi()
 

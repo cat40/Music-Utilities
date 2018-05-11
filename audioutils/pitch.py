@@ -64,34 +64,35 @@ def getPitchCheap(y, sr, depth=1, fmin=16, fmax=4000):
         y = signal.sosfiltfilt(filt, y)
 
 
-def pitchFromAC(y):
+def pitchFromAC(y, sr):
     autocorrelation = autocorrelate(y)
+    timeShift = autocorrelation.argmax()  # find the maximum of the autocorrelation
+    return sr/timeShift # converts the period to a frequenct (timeShift is the number of samples,
+    # so divide by sampling rate to get time in seconds and then invert)
 
 
 
 
-def findOctave(y, note):
+def findOctave(autocorr, note, sr, threshold=.9):
     '''
-    :param y: waveform to get pitch on
-    :param sr: sampling rate of the waveform
+    :param autocorr: autocorrelation of waveform to get pitch over
     :param note: the frequency of the detected pitch
     :return: the corrected pitch
 
     Adapted from https://github.com/ad1269/Monophonic-Pitch-Detection
     '''
-    threshold = .9
-    pass
+    period = note/sr  # converts the note back in the period (in samples)
+    
 
 
 def autocorrelate(y, n=2):
     '''
     :param y: waveform to be autocorrelated (numpy array)
-    :param n: the number of times to perform an autocorrelation
-    :return: the nth autocorrelation of y
+    :param n: the number of times to perform an autocorrelation. Higher value deals with noise better
+    :return: the nth autocorrelation of y (numpy array)
     adapted from https://dsp.stackexchange.com/a/388
     '''
     prevAutocorr = numpy.fft.rfft(y)
-    print(len(y), len(prevAutocorr))
     for _ in range(n):
         prevAutocorr = prevAutocorr*numpy.conj(prevAutocorr)
     return numpy.fft.irfft(prevAutocorr)
