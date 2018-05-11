@@ -3,18 +3,18 @@ import math
 import librosa
 
 
-'''notes:
-currently, a duration must be specified (unlike in lilypond, where a note automatically
-takes the duration of it's predecessor
-
-attributes:
-pitch:      an integer describing the distance, in semitones, of the note from the c below middle C (unmodified c in lilypond 
-            absolute mode, tenor c, or c-3)
-duration:   an integer describing the duration of the note, the same way as in lilypond. longas and breves are -1 and -2 respectivly
-accidental: Whether the note is sharp or flat. Will be constants.LYSHARP or constants.LYFLAT
-
-'''
 class Note(object):
+    '''notes:
+    currently, a duration must be specified (unlike in lilypond, where a note automatically
+    takes the duration of it's predecessor
+
+    attributes:
+    pitch:      an integer describing the distance, in semitones, of the note from the c below middle C (unmodified c in lilypond
+                absolute mode, tenor c, or c-3)
+    duration:   an integer describing the duration of the note, the same way as in lilypond. longas and breves are -1 and -2 respectivly
+    accidental: Whether the note is sharp or flat. Will be constants.LYSHARP or constants.LYFLAT
+
+    '''
     def __init__(self, pitches, duration, useRelative=True):
         self.pitches = pitches if isinstance(pitches, (list, tuple)) else [pitches]
         if isinstance(duration, Duration):
@@ -44,7 +44,6 @@ class Note(object):
 These are just wrapper classes for the lilypond source classes to make them a bit easier to work with
 Arguments have been explained as I understand them, not nessesarily as implemented in the lilypond source code
 '''
-
 class Pitch(lysrc.Pitch):
     def __init__(self, octave, step, alteration):
         super().__init__()
