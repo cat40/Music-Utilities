@@ -28,6 +28,7 @@ class Note(object):
     def fromAudioutils(cls, tempo, note):
         # notes = tuple(notes)
         duration = note.toInt(tempo)
+        print(duration)
         duration = Duration(math.log(duration, 2), 0)
         pitch = Pitch.fromhz(note.freq)
         return cls(pitch, duration)
@@ -71,9 +72,6 @@ class Pitch(lysrc.Pitch):
         print(octave, step, alteration)
         return cls(octave, step, alteration)
 
-    def __str__(self):
-        return repr(self)
-
     @staticmethod
     def normalizenote(freq):
         return librosa.core.note_to_hz(librosa.core.hz_to_note(freq))
@@ -86,6 +84,3 @@ class Duration(lysrc.Duration):
         self.dots = dots  # number of dots
         if factor is not None:
             self.factor = factor  # todo: figure out what this does
-
-    def __str__(self):
-        return repr(self)
