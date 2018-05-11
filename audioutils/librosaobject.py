@@ -116,38 +116,35 @@ class LibrosaObject(object):
         harmonic, percussive = self.splitHarmonicPercussive()  # test this, also seems to take a very long time. Consider making the defenition of a perucssive sound more strict(see librosa docs)
         # split remaining by frequency (make sure the above isn't good enough first
         onsetsP = self.onsets_helper(percussive, self.samplingrate)
-        #onsets.append((onsetsP, percussive))
-        # # numpy.concatenate([onsets, (onsetsP, percussive)])
-        # splitfunc = self.splitfuncs[method]
-        # for i, y in enumerate(splitfunc(y=harmonic)):
-        #     onsets_i = self.onsets_helper(y, self.samplingrate)
-        #     # numpy.concatenate([onsets, (onsets_i, y)])
-        #     onsets.append((onsets_i, y))
-        #     if debug:
-        #         clicks = librosa.core.clicks(frames=librosa.core.samples_to_frames(onsets_i), sr=self.samplingrate,
-        #                                      click_freq=220)
-        #         librosa.output.write_wav(os.path.join('tests\\results',
-        #                                               os.path.splitext(os.path.basename(self.fname))[
-        #                                                   0] + '_onsets_octave_%s.wav' % i), clicks, self.samplingrate)
-        # if debug:
-        #     librosa.output.write_wav(os.path.join('tests\\results', os.path.splitext(os.path.basename(self.fname))[
-        #         0] + '_percussive.wav'), percussive, self.samplingrate)
-        #     librosa.output.write_wav(
-        #         os.path.join('tests\\results', os.path.splitext(os.path.basename(self.fname))[0] + '_harmonic.wav'),
-        #         harmonic, self.samplingrate)
-        #     clicks = librosa.core.clicks(frames=librosa.core.samples_to_frames(onsetsP), sr=self.samplingrate,
-        #                                  click_freq=220)
-        #     librosa.output.write_wav(
-        #         os.path.join('tests\\results', os.path.splitext(os.path.basename(self.fname))[0] + '_onsets_p.wav'),
-        #         clicks, self.samplingrate)
-        # if self.usecache:
-        #     self.cache.write(onsets, 'onsets')
-        # ##            self.cache.writeBatch((harmonic, 'harmonic'),
-        # ##                                  (percussive, 'percussive'),
-        # ##                                  (onsets, 'onsets'))
-        #
-        # return onsets
-        return [(onsetsP, harmonic)]
+        if method == 'perc':
+            return [(onsetsP, self.waveform)]
+        onsets.append((onsetsP, percussive))
+        # numpy.concatenate([onsets, (onsetsP, percussive)])
+        splitfunc = self.splitfuncs[method]
+        for i, y in enumerate(splitfunc(y=harmonic)):
+            onsets_i = self.onsets_helper(y, self.samplingrate)
+            # numpy.concatenate([onsets, (onsets_i, y)])
+            onsets.append((onsets_i, y))
+            if debug:
+                clicks = librosa.core.clicks(frames=librosa.core.samples_to_frames(onsets_i), sr=self.samplingrate,
+                                             click_freq=220)
+                librosa.output.write_wav(os.path.join('tests\\results',
+                                                      os.path.splitext(os.path.basename(self.fname))[
+                                                          0] + '_onsets_octave_%s.wav' % i), clicks, self.samplingrate)
+        if debug:
+            librosa.output.write_wav(os.path.join('tests\\results', os.path.splitext(os.path.basename(self.fname))[
+                0] + '_percussive.wav'), percussive, self.samplingrate)
+            librosa.output.write_wav(
+                os.path.join('tests\\results', os.path.splitext(os.path.basename(self.fname))[0] + '_harmonic.wav'),
+                harmonic, self.samplingrate)
+            clicks = librosa.core.clicks(frames=librosa.core.samples_to_frames(onsetsP), sr=self.samplingrate,
+                                         click_freq=220)
+            librosa.output.write_wav(
+                os.path.join('tests\\results', os.path.splitext(os.path.basename(self.fname))[0] + '_onsets_p.wav'),
+                clicks, self.samplingrate)
+        if self.usecache:
+            self.cache.write(onsets, 'onsets')
+        return onsets
 
     def getOnsetsSimple(self, debug=False):
         if self.usecache:
@@ -200,7 +197,7 @@ class LibrosaObject(object):
                 return self.notes
             except:  # cModule.CacheNotFoundError:
                 pass
-        for x, (onsets, y) in enumerate(self.getOnsets(debug=True)):
+        for x, (onsets, y) in enumerate(self.getOnsets(method='perc', debug=True)):
             # go through each onset
             for i, j in zip([0] + list(onsets), list(onsets) + [len(y)]):
                 # pitch = self.getPitch(y[i:j], i, j, x)
@@ -455,21 +452,21 @@ class LibrosaObject(object):
     @classmethod
     def getPitchCheap(cls, y, sr, depth=1, fmin=16, fmax=4000):
         y = copy.deepcopy(y)
-        filt = cls.helper_butter(sr, fmin, fmax)
-        y = signal.sosfiltfilt(filt, y)
+        # filt = cls.helper_butter(sr, fmin, fmax) # todo make this work (has a nyqulist error)
+        # y = signal.sosfiltfilt(filt, y)
         for _ in range(depth):
             pitches, magnitudes = librosa.piptrack(y=y, sr=sr)
             i = numpy.unravel_index(magnitudes.argmax(),
                                     magnitudes.shape)  # unravel_index transforms the bizzare integer returned by argmax into a tuple index
             pitch = pitches[i]
-            # todo: break loop here on last iteration
+            if _ == depth-1:
+                return pitch
             # now look just at the waveform in the section of the predicted pitch
             radius = .25
             fmax = pitch * (1+radius)
             fmin = pitch * (1-radius)
             filt = cls.helper_butter(sr, fmin, fmax)
             y = signal.sosfiltfilt(filt, y)
-        return pitch
 
     @staticmethod
     def rmse(y):
