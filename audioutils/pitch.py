@@ -70,7 +70,7 @@ def getPitch(y, sr):
     '''
     autocorr = autocorrelate(y)
     estimate = pitchFromAC(autocorr, sr, autocorrelated=True)
-    if 20 < estimate < 4000:
+    if 20 < estimate < 4000:  # todo make min and max frequencies keyword arguments
         return fixOctave(autocorr, estimate, sr)
     return 0
 
@@ -91,11 +91,14 @@ def pitchFromAC(y, sr, autocorrelated=False):
     autocorrelation[:int(imin)] = 0
     autocorrelation[int(imax):] = 0
     timeShift = autocorrelation.argmax()  # find the maximum of the autocorrelation
+    print('timeshift', timeShift)
+    if not timeShift:
+        return 0
     return sr/timeShift # converts the period to a frequenct (timeShift is the number of samples,
     # so divide by sampling rate to get time in seconds and then invert)
 
 
-def fixOctave(autocorr, note, sr, threshold=.9, minfreq=27.5):
+def fixOctave(autocorr, note, sr, threshold=.9, maxfreq=4000):
     '''
     :param autocorr: autocorrelation of waveform to get pitch over
     :param note: the frequency of the detected pitch
@@ -103,14 +106,16 @@ def fixOctave(autocorr, note, sr, threshold=.9, minfreq=27.5):
 
     Adapted from https://github.com/ad1269/Monophonic-Pitch-Detection
     '''
-    period = note/sr  # converts the note back in the period (in samples)
-    autocorrArgMax = autocorr.argmax()
-    print('note', note, 'argmax', autocorrArgMax)
-    maxMultiplier = int(round(autocorrArgMax // (sr / minfreq), 0))
+    period = 1/note * sr  # converts the note back in the period (in samples)
+    minperiod = sr // maxfreq
+    autocorrArgMax = autocorr.argmax()  # this is the same as the period found above
+    print('note', note, 'period', period, 'argmax', autocorrArgMax)
+    print(minperiod)
+    maxMultiplier = int(round(period // minperiod, 0))
     print('maxmul', maxMultiplier)
     for multiplier in range(maxMultiplier, 1-1, -1):
         for mul in range(1, multiplier):
-            tempPeriod = int(round(mul * period/multiplier), 0)
+            tempPeriod = int(round(mul * period/multiplier, 0))
             print(multiplier, mul, tempPeriod)
             if autocorr[tempPeriod] < threshold * autocorr[autocorrArgMax]:
                 break
