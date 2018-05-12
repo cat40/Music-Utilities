@@ -96,7 +96,7 @@ def fixOctave(autocorr, note, sr, threshold=.9, minfreq=27.5):
     '''
     period = note/sr  # converts the note back in the period (in samples)
     autocorrArgMax = autocorr.argmax()
-    maxMultiplier = autocorrArgMax // (sr / minfreq)
+    maxMultiplier = int(round(autocorrArgMax // (sr / minfreq), 0))
     for multiplier in range(maxMultiplier, 1-1, -1):
         for mul in range(1, multiplier):
             tempPeriod = int(round(mul * period/multiplier), 0)
