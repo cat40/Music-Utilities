@@ -9,8 +9,7 @@ import math
 import lyutils
 from .cache import Cache
 from .note import Note
-from numpy import pi, polymul
-from scipy.signal import bilinear
+from . import pitch as pitchfs
 
 
 # use a combination of onset detection and frequency detection to get note times, durations, and frequencies
@@ -179,8 +178,7 @@ class LibrosaObject(object):
         imin = self.samplingrate / fmax  # I don't think these are backwards
         imax = self.samplingrate / fmin
         print(imin, imax)
-        r[:int(
-            imin)] = 0  # -sys.float_info.max#float('-inf') #apparently numpy supports mass assignement by slice syntax. All indexes in the slice have thier values set to 0
+        r[:int(imin)] = 0  # -sys.float_info.max#float('-inf') #apparently numpy supports mass assignement by slice syntax. All indexes in the slice have thier values set to 0
         r[int(imax):] = 0  # -sys.float_info.max#float('-inf')
         # find index of maximum autocorrelation
         print(r)
@@ -201,7 +199,7 @@ class LibrosaObject(object):
             # go through each onset
             for i, j in zip([0] + list(onsets), list(onsets) + [len(y)]):
                 # pitch = self.getPitch(y[i:j], i, j, x)
-                pitch = self.getPitchCheap(y[i:j], self.samplingrate)
+                pitch = pitchfs.getPitchCheap(y[i:j], self.samplingrate)
                 # rmse = librosa.feature.rmse(y=y[i:j])
                 # print 'have rmse'
                 # volume = sum(rmse)/len(rmse) #for some reason, this is still an array
@@ -237,7 +235,7 @@ class LibrosaObject(object):
             sine = self.genSineFunc(self.normalizeNote(note.freq), note.volume, self.samplingrate)
             waveform[start:end] = [(sine(i) + x) for i, x in enumerate(waveform[start:end])]
             # map(lambda x : sine(i) + x, waveform[start:end])
-        b, a = self.A_weighting(48000)
+        b, a = pitchfs.A_weighting(48000)
         waveform = signal.filtfilt(b, a, waveform)  # perform a-weighting
         librosa.output.write_wav(
             os.path.join('tests\\results', os.path.splitext(os.path.basename(self.fname))[0] + '_notes.wav'),
@@ -296,7 +294,7 @@ class LibrosaObject(object):
     # apply a butterworth filter to seperate the buttermilk from the butter
     def butter(self, fmin=0, fmax=None, order=6, y=None):
         # assert fmin != 0 or fmax is not None, 'failed to specify a minimum or maximum frequency'
-        filterbank = self.helper_butter(self.samplingrate, fmin, fmax, order)
+        filterbank = pitchfs.helper_butter(self.samplingrate, fmin, fmax, order)
         if y is None: y = self.waveform
         return signal.sosfiltfilt(filterbank, y)  # (*(filterbank+(self.waveform,)))
 
@@ -382,19 +380,6 @@ class LibrosaObject(object):
         globalblock = [lyutils.Time(4, 4), lyutils.Key('c', 'major')]
         return lyutils.Music(instruments, globalparts=globalblock, basenote=base)
 
-    # just a wrapper for scipy.signal.butter for readability
-    @staticmethod
-    def helper_butter(sr, fmin=0, fmax=None, order=6, output='sos'):
-        nyquist = sr / 2
-        assert fmax < nyquist, 'maximum frequency is above the Nyquist frequency'
-        cutofflow = fmin / nyquist
-        if fmax is None:
-            return signal.butter(order, cutofflow, btype='lowpass', output=output)
-        cutoffhigh = fmax / nyquist
-        if fmin:
-            return signal.butter(order, (cutofflow, cutoffhigh), btype='bandpass', output=output)
-        return signal.butter(order, cutoffhigh, btype='highpass', output=output)
-
     @classmethod
     def condenseOnsets(cls, onsets):
         new = numpy.empty((0,))
@@ -414,59 +399,6 @@ class LibrosaObject(object):
     @staticmethod
     def genSineFunc(freq, amp, sr):
         return lambda x: amp * math.sin(2 * numpy.pi * freq * x / sr)
-
-    # copied from https://gist.github.com/endolith/148112
-    @staticmethod
-    def A_weighting(fs):
-        """Design of an A-weighting filter.
-        b, a = A_weighting(fs) designs a digital A-weighting filter for
-        sampling frequency `fs`. Usage: y = scipy.signal.lfilter(b, a, x).
-        Warning: `fs` should normally be higher than 20 kHz. For example,
-        fs = 48000 yields a class 1-compliant filter.
-        References:
-           [1] IEC/CD 1672: Electroacoustics-Sound Level Meters, Nov. 1996.
-        """
-        # Definition of analog A-weighting filter according to IEC/CD 1672.
-        f1 = 20.598997
-        f2 = 107.65265
-        f3 = 737.86223
-        f4 = 12194.217
-        A1000 = 1.9997
-
-        NUMs = [(2 * pi * f4) ** 2 * (10 ** (A1000 / 20)), 0, 0, 0, 0]
-        DENs = polymul([1, 4 * pi * f4, (2 * pi * f4) ** 2],
-                       [1, 4 * pi * f1, (2 * pi * f1) ** 2])
-        DENs = polymul(polymul(DENs, [1, 2 * pi * f3]),
-                       [1, 2 * pi * f2])
-
-        # Use the bilinear transformation to get the digital filter.
-        # (Octave, MATLAB, and PyLab disagree about Fs vs 1/Fs)
-        return bilinear(NUMs, DENs, fs)
-
-    '''
-    Another pitch getting method. precision on a pure sine wav seems to be about +- 0.5 to 1
-    how it works:
-    librosa.piptrack returns paralell arrays of pitches and magnitudes for each bin. Pitch at the max magnidute is the dominent pitch. 
-    '''
-
-    @classmethod
-    def getPitchCheap(cls, y, sr, depth=1, fmin=16, fmax=4000):
-        y = copy.deepcopy(y)
-        # filt = cls.helper_butter(sr, fmin, fmax) # todo make this work (has a nyqulist error)
-        # y = signal.sosfiltfilt(filt, y)
-        for _ in range(depth):
-            pitches, magnitudes = librosa.piptrack(y=y, sr=sr)
-            i = numpy.unravel_index(magnitudes.argmax(),
-                                    magnitudes.shape)  # unravel_index transforms the bizzare integer returned by argmax into a tuple index
-            pitch = pitches[i]
-            if _ == depth-1:
-                return pitch
-            # now look just at the waveform in the section of the predicted pitch
-            radius = .25
-            fmax = pitch * (1+radius)
-            fmin = pitch * (1-radius)
-            filt = cls.helper_butter(sr, fmin, fmax)
-            y = signal.sosfiltfilt(filt, y)
 
     @staticmethod
     def rmse(y):
