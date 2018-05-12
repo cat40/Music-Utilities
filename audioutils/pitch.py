@@ -38,14 +38,12 @@ def A_weighting(fs):
     return bilinear(NUMs, DENs, fs)
 
 
-'''
-Another pitch getting method. precision on a pure sine wav seems to be about +- 0.5 to 1
-how it works:
-librosa.piptrack returns paralell arrays of pitches and magnitudes for each bin. Pitch at the max magnidute is the dominent pitch. 
-'''
-
-
 def getPitchCheap(y, sr, depth=1, fmin=16, fmax=4000):
+    '''
+    Another pitch getting method. precision on a pure sine wav seems to be about +- 0.5 to 1
+    how it works:
+    librosa.piptrack returns paralell arrays of pitches and magnitudes for each bin. Pitch at the max magnidute is the dominent pitch.
+    '''
     y = copy.deepcopy(y)
     # filt = cls.helper_butter(sr, fmin, fmax) # todo make this work (has a nyqulist error)
     # y = signal.sosfiltfilt(filt, y)
@@ -64,8 +62,25 @@ def getPitchCheap(y, sr, depth=1, fmin=16, fmax=4000):
         y = signal.sosfiltfilt(filt, y)
 
 
-def pitchFromAC(y, sr):
-    autocorrelation = autocorrelate(y)
+def getPitch(y, sr):
+    '''
+    :param y: the waveform to run pitch detection on
+    :param sr: the sampling rate of the waveform
+    :return: the estimated frequency of the waveform, in hz
+    '''
+    autocorr = autocorrelate(y)
+    estimate = pitchFromAC(autocorr, sr, autocorrelated=True)
+    return fixOctave(autocorr, estimate, sr)
+
+
+def pitchFromAC(y, sr, autocorrelated=False):
+    '''
+    :param y: waveform to run analysis on
+    :param sr: sampling rate of the waveform
+    :param autocorrelated: whether or not y is an autocorrelation of the actual waveform
+    :return: a frequency estimate, in hz
+    '''
+    autocorrelation = y if autocorrelated else autocorrelate(y)
     timeShift = autocorrelation.argmax()  # find the maximum of the autocorrelation
     return sr/timeShift # converts the period to a frequenct (timeShift is the number of samples,
     # so divide by sampling rate to get time in seconds and then invert)
@@ -75,7 +90,7 @@ def fixOctave(autocorr, note, sr, threshold=.9, minfreq=27.5):
     '''
     :param autocorr: autocorrelation of waveform to get pitch over
     :param note: the frequency of the detected pitch
-    :return: the corrected pitch
+    :return: the corrected pitch, in hz
 
     Adapted from https://github.com/ad1269/Monophonic-Pitch-Detection
     '''
@@ -89,6 +104,7 @@ def fixOctave(autocorr, note, sr, threshold=.9, minfreq=27.5):
                 break
         else:  # for loop was not broken
             return note * multiplier
+    raise Exception('no note was found')  # if something went wrong
 
 def autocorrelate(y, n=2):
     '''
