@@ -199,7 +199,7 @@ class LibrosaObject(object):
             # go through each onset
             for i, j in zip([0] + list(onsets), list(onsets) + [len(y)]):
                 # pitch = self.getPitch(y[i:j], i, j, x)
-                pitch = pitchfs.getPitchCheap(y[i:j], self.samplingrate)
+                pitch = pitchfs.getPitch(y[i:j], self.samplingrate)
                 # rmse = librosa.feature.rmse(y=y[i:j])
                 # print 'have rmse'
                 # volume = sum(rmse)/len(rmse) #for some reason, this is still an array
