@@ -71,9 +71,7 @@ def pitchFromAC(y, sr):
     # so divide by sampling rate to get time in seconds and then invert)
 
 
-
-
-def findOctave(autocorr, note, sr, threshold=.9):
+def fixOctave(autocorr, note, sr, threshold=.9, minfreq=27.5):
     '''
     :param autocorr: autocorrelation of waveform to get pitch over
     :param note: the frequency of the detected pitch
@@ -82,8 +80,15 @@ def findOctave(autocorr, note, sr, threshold=.9):
     Adapted from https://github.com/ad1269/Monophonic-Pitch-Detection
     '''
     period = note/sr  # converts the note back in the period (in samples)
-    
-
+    autocorrArgMax = autocorr.argmax()
+    maxMultiplier = autocorrArgMax // (sr / minfreq)
+    for multiplier in range(maxMultiplier, 1-1, -1):
+        for mul in range(1, multiplier):
+            tempPeriod = int(round(mul * period/multiplier), 0)
+            if autocorr[tempPeriod] < threshold * autocorr[autocorrArgMax]:
+                break
+        else:  # for loop was not broken
+            return note * multiplier
 
 def autocorrelate(y, n=2):
     '''
