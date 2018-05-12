@@ -70,7 +70,9 @@ def getPitch(y, sr):
     '''
     autocorr = autocorrelate(y)
     estimate = pitchFromAC(autocorr, sr, autocorrelated=True)
-    return fixOctave(autocorr, estimate, sr)
+    if 20 < estimate < 4000:
+        return fixOctave(autocorr, estimate, sr)
+    return 0
 
 
 def pitchFromAC(y, sr, autocorrelated=False):
@@ -79,8 +81,15 @@ def pitchFromAC(y, sr, autocorrelated=False):
     :param sr: sampling rate of the waveform
     :param autocorrelated: whether or not y is an autocorrelation of the actual waveform
     :return: a frequency estimate, in hz
+    todo make fmin and fmax keyword arguments
     '''
+    fmin = 27.5
+    fmax = 4000
+    imin = sr // fmax
+    imax = sr // fmin
     autocorrelation = y if autocorrelated else autocorrelate(y)
+    autocorrelation[:int(imin)] = 0
+    autocorrelation[int(imax):] = 0
     timeShift = autocorrelation.argmax()  # find the maximum of the autocorrelation
     return sr/timeShift # converts the period to a frequenct (timeShift is the number of samples,
     # so divide by sampling rate to get time in seconds and then invert)
@@ -96,10 +105,13 @@ def fixOctave(autocorr, note, sr, threshold=.9, minfreq=27.5):
     '''
     period = note/sr  # converts the note back in the period (in samples)
     autocorrArgMax = autocorr.argmax()
+    print('note', note, 'argmax', autocorrArgMax)
     maxMultiplier = int(round(autocorrArgMax // (sr / minfreq), 0))
+    print('maxmul', maxMultiplier)
     for multiplier in range(maxMultiplier, 1-1, -1):
         for mul in range(1, multiplier):
             tempPeriod = int(round(mul * period/multiplier), 0)
+            print(multiplier, mul, tempPeriod)
             if autocorr[tempPeriod] < threshold * autocorr[autocorrArgMax]:
                 break
         else:  # for loop was not broken
