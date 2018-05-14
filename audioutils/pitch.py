@@ -73,7 +73,7 @@ def getPitch(y, sr):
     autocorr = autocorrelate(y)
     estimate = pitchFromAC(autocorr, sr, autocorrelated=True)
     if 20 < estimate < 4000:  # todo make min and max frequencies keyword arguments
-        return fixOctave2(autocorr, estimate, sr, exp)
+        return fixOctave2(autocorr, estimate, sr, log)
     return 0
 
 
@@ -213,3 +213,8 @@ def fancy(note, guess):
 
 def exp(note, guess):
     return 1 - 2**(-.005 * guess)
+
+
+def log(note, guess):
+    a = 1300
+    return math.log((guess+a)/a)
