@@ -71,7 +71,7 @@ def getPitch(y, sr):
     autocorr = autocorrelate(y)
     estimate = pitchFromAC(autocorr, sr, autocorrelated=True)
     if 20 < estimate < 4000:  # todo make min and max frequencies keyword arguments
-        return fixOctave(autocorr, estimate, sr)
+        return fixOctave2(autocorr, estimate, sr, simpleinverse)
     return 0
 
 
@@ -102,6 +102,8 @@ def fixOctave(autocorr, note, sr, threshold=.9, maxfreq=4000):
     '''
     :param autocorr: autocorrelation of waveform to get pitch over
     :param note: the frequency of the detected pitch
+    :param threshold: The multiple of the highest peak the new peak must be greater than.
+    :param maxfreq: the maximum frequency detectable, in hz
     :return: the corrected pitch, in hz
 
     Adapted from https://github.com/ad1269/Monophonic-Pitch-Detection
@@ -121,7 +123,38 @@ def fixOctave(autocorr, note, sr, threshold=.9, maxfreq=4000):
                 break
         else:  # for loop was not broken
             return note * multiplier
-    raise Exception('no note was found')  # if something went wrong
+    raise Exception('no note was found')  # something went wrong
+
+
+def fixOctave2(autocorr, note, sr, thresholdF, maxfreq=4000):
+    '''
+    :param autocorr: Autocorrelation of the waveform to detect pitch over
+    :param note: The previously estimated pitch, in hz
+    :param sr: Sampling rate of the waveform, in hz
+    :param thresholdF: A function that will yeild a threshold(see previous) given a distance in hz between the
+    note (param note) estimate and the current guess. Threshold should probably be >= 0 unless you want some
+    really strange stuff to happen
+    :param maxfreq: The maximum frequency detectable
+    :return: An octave corrected pitch
+
+    Adapted from https://github.com/ad1269/Monophonic-Pitch-Detection, with the exception of the threshold function
+    '''
+    period = 1/note * sr  # converts the note back in the period (in samples)
+    minperiod = sr // maxfreq
+    autocorrArgMax = autocorr.argmax()  # this is the same as the period found above
+    print('note', note, 'period', period, 'argmax', autocorrArgMax)
+    print(minperiod)
+    maxMultiplier = int(round(period // minperiod, 0))
+    print('maxmul', maxMultiplier)
+    for multiplier in range(maxMultiplier, 1-1, -1):
+        for mul in range(1, multiplier):
+            tempPeriod = int(round(mul * period/multiplier, 0))
+            print(multiplier, mul, tempPeriod)
+            if autocorr[tempPeriod] < thresholdF(note, sr/tempPeriod) * autocorr[autocorrArgMax]:
+                break
+        else:  # for loop was not broken
+            return note * multiplier
+    raise Exception('no note was found')  # something went wrong
 
 def autocorrelate(y, n=2):
     '''
@@ -146,3 +179,28 @@ def helper_butter(sr, fmin=0, fmax=None, order=6, output='sos'):
     if fmin:
         return signal.butter(order, (cutofflow, cutoffhigh), btype='bandpass', output=output)
     return signal.butter(order, cutoffhigh, btype='highpass', output=output)
+
+
+'''
+Some sample threshold functions to be used for fix octave 2
+
+For all functions below:
+:param note: origonal estimated note
+:param guess: current guess
+:return: a multiplier
+'''
+
+def simpleinverse(note, guess):
+    '''
+    :return: multiplier between 0 and 1
+    '''
+    distance = guess-note
+    scale = 350
+    return 1 - 1 / ((abs(distance)-scale)/scale)
+
+def fancy(note, guess):
+    mults = {2, .95,  # major second
+             7, .75,  # perfect fifth
+             5, .20}  # perfect second
+    distance = abs(librosa.core.hz_to_midi(guess) - librosa.core.hz_to_midi(note))
+    
