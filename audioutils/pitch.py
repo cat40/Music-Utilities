@@ -188,6 +188,11 @@ For all functions below:
 :param note: origonal estimated note
 :param guess: current guess
 :return: a multiplier
+
+ideas to implement:
+something based on pachelbel's canon chord progression
+a sine wave (ineffective, but amusing)
+use a log scale for threshold, so lower frequencies require less energy
 '''
 
 def simpleinverse(note, guess):
@@ -203,4 +208,6 @@ def fancy(note, guess):
              7, .75,  # perfect fifth
              5, .20}  # perfect second
     distance = abs(librosa.core.hz_to_midi(guess) - librosa.core.hz_to_midi(note))
-    
+
+def exp(note, guess):
+    return 2**(-.0007 * guess)
