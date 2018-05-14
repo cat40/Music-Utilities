@@ -197,13 +197,15 @@ a sine wave (ineffective, but amusing)
 use a log scale for threshold, so lower frequencies require less energy
 '''
 
+
 def simpleinverse(note, guess):
     '''
-    :return: multiplier between 0 and 1
+    :return: multiplier (0, 1)
     '''
     distance = guess-note
     scale = 350
     return 1 - 1 / ((abs(distance)-scale)/scale)
+
 
 def fancy(note, guess):
     mults = {2, .95,  # major second
@@ -211,10 +213,18 @@ def fancy(note, guess):
              5, .20}  # perfect second
     distance = abs(librosa.core.hz_to_midi(guess) - librosa.core.hz_to_midi(note))
 
+
 def exp(note, guess):
+    '''
+    :return: multiplier [0, 1)
+    '''
     return 1 - 2**(-.005 * guess)
 
 
 def log(note, guess):
+    '''
+    this one seems to work best at the moment
+    :return: multiplier (0, oo)
+    '''
     a = 30
     return math.log((guess+a)/a, 10)
