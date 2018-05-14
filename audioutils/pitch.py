@@ -71,7 +71,7 @@ def getPitch(y, sr):
     autocorr = autocorrelate(y)
     estimate = pitchFromAC(autocorr, sr, autocorrelated=True)
     if 20 < estimate < 4000:  # todo make min and max frequencies keyword arguments
-        return fixOctave2(autocorr, estimate, sr, simpleinverse)
+        return fixOctave2(autocorr, estimate, sr, exp)
     return 0
 
 
@@ -210,4 +210,4 @@ def fancy(note, guess):
     distance = abs(librosa.core.hz_to_midi(guess) - librosa.core.hz_to_midi(note))
 
 def exp(note, guess):
-    return 2**(-.0007 * guess)
+    return 1 - 2**(-.0007 * guess)
