@@ -1,4 +1,6 @@
 import copy
+import math
+
 import librosa
 import numpy
 from numpy import pi, polymul
@@ -210,4 +212,4 @@ def fancy(note, guess):
     distance = abs(librosa.core.hz_to_midi(guess) - librosa.core.hz_to_midi(note))
 
 def exp(note, guess):
-    return 1 - 2**(-.005 * guess)
+    return 1 - math.e**(-.005 * guess)
