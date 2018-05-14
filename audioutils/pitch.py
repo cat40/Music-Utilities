@@ -210,4 +210,4 @@ def fancy(note, guess):
     distance = abs(librosa.core.hz_to_midi(guess) - librosa.core.hz_to_midi(note))
 
 def exp(note, guess):
-    return 1 - 2**(-.0007 * guess)
+    return 1 - 2**(-.005 * guess)
