@@ -216,5 +216,5 @@ def exp(note, guess):
 
 
 def log(note, guess):
-    a = 1300
-    return math.log((guess+a)/a)
+    a = 30
+    return math.log((guess+a)/a, 10)
