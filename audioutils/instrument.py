@@ -66,7 +66,7 @@ class Instrument(object):
         return lyutils.Instrument(self.name, sequence)
 
     def convert2(self, tempo):
-        sequence = list(map(lambda x : lyutils.Note.fromAudioutils(tempo, x), sorted(self.notes, key=lambda x : x.start)))
+        sequence = list(map(lambda x : lyutils.Note.fromAudioutils(tempo, x), filter(lambda x : x.toInt(tempo) != 0, sorted(self.notes, key=lambda x : x.start))))
         return lyutils.Instrument(self.name, sequence)
 
 

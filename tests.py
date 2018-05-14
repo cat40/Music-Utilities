@@ -66,3 +66,5 @@ instruments = [VIOLIN, CELLO]
 testly('cmajorpiano.wav', [Instrument(60, preset=PIANO)], 60, True)  # todo figure out why tempo is in both audioutils.Instrument and lyutils.music
 # testly('4 strings pizz.wav', [Instrument(80, preset=VIOLA)], 80, True)
 testInternals('cmajorpiano.wav')
+
+testly('Lovely Piano Song.mp3', [Instrument(105, preset=PIANO)], 105, True)
