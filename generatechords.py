@@ -35,7 +35,7 @@ def genChords(progressions):
             if not callable(prog):
                 n = len(prog)
             else: raise
-        chords.append(Progressions.to_chords(genhelper(n, key, prog)))
+        chords.extend(Progressions.to_chords(genhelper(n, key, prog)))
     return chords
 
 
@@ -45,6 +45,7 @@ def toPitch(name, octave):
     :param octave: note octave, integer
     :return: an lyutils Pitch
     '''
+    print(name)
     return lyutils.Pitch.frommidi(librosa.core.note_to_midi(name+'0') + 12*octave)
 
 
@@ -57,7 +58,9 @@ def toly(chords, duration, instrument, octave):
     todo: expand octave to allow octave changing
     :return: None. Instrument's sequence has been modified
     '''
-    pitches = (list(map(lambda x: lyutils.Pitch.frommidi(toPitch(x, octave)), chord)) for chord in chords)
+    print(chords)
+    pitches = [list(map(lambda x: toPitch(x, octave), chord)) for chord in chords]
+    print(pitches)
     notes = (lyutils.Note(pitch, duration) for pitch in pitches)
     instrument.sequence.extend(notes)
 
