@@ -60,7 +60,6 @@ class Pitch(lysrc.Pitch):
 
     @classmethod
     def frommidi(cls, midi):
-        print(midi)
         C = librosa.core.note_to_midi('c3')
         midilist = [0, 2, 4, 5, 7, 9, 11]
         mididict = dict(zip(midilist, range(6+1)))
@@ -69,7 +68,6 @@ class Pitch(lysrc.Pitch):
         step = min(midilist, key=lambda x : abs(x-halfstep))  # gets the nearest natural note
         alteration = halfstep-step  # the left over accidental
         step = mididict[step]
-        print(octave, step, alteration)
         return cls(octave, step, alteration)
 
     @staticmethod
