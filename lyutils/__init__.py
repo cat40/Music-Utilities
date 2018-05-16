@@ -4,3 +4,4 @@ from .lymusic import Music  # music class
 from .lyObjs import *  # music components
 from .note import Pitch, Duration, Note  # note stuff
 from . import lysrc
+from .romannumerals import romannumerals
