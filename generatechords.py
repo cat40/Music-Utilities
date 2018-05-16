@@ -38,6 +38,7 @@ def genChords(progressions):
         chords.append(Progressions.to_chords(genhelper(n, key, prog)))
     return chords
 
+
 def toPitch(name, octave):
     '''
     :param name: note name (c, d, e) etc
@@ -47,19 +48,45 @@ def toPitch(name, octave):
     return lyutils.Pitch.frommidi(librosa.core.note_to_midi(name+'0') + 12*octave)
 
 
-def random(_, key):
+def toly(chords, duration, instrument, octave):
     '''
-    :param _: garbage can for the index argument supplied in genhelper
-    :param key: the key the chord is in
-    :return: a random chord in the specified key
+    :param chords: a list of Mingus chords, where a chord is a list of note letters (ex. [C, E, G])
+    :param duration: an lyutils.Duration to denote the duration of the notes
+    :param instrument: An lyutils.Instrument, with everything pre-initalized
+    :param octave: octave the notes should be in
+    todo: expand octave to allow octave changing
+    :return: None. Instrument's sequence has been modified
     '''
-    pass
+    pitches = (list(map(lambda x: lyutils.Pitch.frommidi(toPitch(x, octave)), chord)) for chord in chords)
+    notes = (lyutils.Note(pitch, duration) for pitch in pitches)
+    instrument.sequence.extend(notes)
 
 
-def randomsimple(_, key):
+def randomchord(_, __):
     '''
     :param _: garbage can for the index argument supplied in genhelper
-    :param key: the key the chord is in
-    :return: a random chord in the specified key, using only the natural diatonic triads
+    :param __: garbage can for the key argument supplied in genhelper
+    :return: a random chord
     '''
-    return lyutils.roman
+    return random.choice(Chords.chord_shorthand.keys())
+
+
+def randomchordsimple(_, __):
+    '''
+    :param _: garbage can for the index argument supplied in genhelper
+    :param __: garbage can for the key argument supplied in genhelper
+    :return: a random chord in the specified, using only the natural diatonic triads
+    '''
+    return lyutils.romannumerals(random.randint(1, 7)).upper()
+
+# run tests
+if __name__ == '__main__':
+    # produce a random chord progression
+    progression = []
+    for key in 'ABCDEFG':
+        progression.append([randomchordsimple, key, 12])
+    chords = genChords(progression)
+    inst = lyutils.Instrument('cello', [])
+    toly(chords, lyutils.Duration(0, 0), inst, 2)
+    music = lyutils.Music(80, [inst])
+    music.write('.\\tests\\results\\genrandom.ly')
