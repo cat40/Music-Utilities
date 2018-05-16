@@ -16,6 +16,7 @@ def genhelper(n, key, progression):
     '''
     for i in range(n):
         if callable(progression):
+            print('callable')
             yield progression(i, key)
         else:
             yield progression[len(progression) % i]
@@ -45,7 +46,6 @@ def toPitch(name, octave):
     :param octave: note octave, integer
     :return: an lyutils Pitch
     '''
-    print(name)
     return lyutils.Pitch.frommidi(librosa.core.note_to_midi(name+'0') + 12*octave)
 
 
@@ -58,9 +58,9 @@ def toly(chords, duration, instrument, octave):
     todo: expand octave to allow octave changing
     :return: None. Instrument's sequence has been modified
     '''
+    print('chords', len(chords))
     print(chords)
-    pitches = [list(map(lambda x: toPitch(x, octave), chord)) for chord in chords]
-    print(pitches)
+    pitches = (list(map(lambda x: toPitch(x, octave), chord)) for chord in chords)
     notes = (lyutils.Note(pitch, duration) for pitch in pitches)
     instrument.sequence.extend(notes)
 
@@ -87,7 +87,7 @@ if __name__ == '__main__':
     # produce a random chord progression
     progression = []
     for key in 'ABCDEFG':
-        progression.append([randomchordsimple, key, 12])
+        progression.append([randomchordsimple, key, 50])
     chords = genChords(progression)
     inst = lyutils.Instrument('cello', [])
     toly(chords, lyutils.Duration(0, 0), inst, 2)
