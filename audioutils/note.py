@@ -42,8 +42,7 @@ class Note(object):
         :param duration:
         :param tempo: can be a number or a tuple (bpm, note_base) where note_base is the note that gets the beat
         If tempo is a single number, quarter note base will be assumed
-        :return:
-        TODO: add support for dotted notes
+        :return: a number. If 0, the note has no duration
         '''
         # convert an integer tempo to a tuple tempo (assumes quarter note base
         if isinstance(tempo, (float, int)):

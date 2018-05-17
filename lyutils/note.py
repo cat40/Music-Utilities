@@ -1,6 +1,7 @@
 from . import lysrc
 import math
 import librosa
+import itertools
 
 
 class Note(object):
@@ -27,9 +28,8 @@ class Note(object):
     @classmethod
     def fromAudioutils(cls, tempo, note):
         # notes = tuple(notes)
-        duration = note.toInt(tempo)
+        duration = Duration.fromtime(note.duration, tempo)
         print(duration)
-        duration = Duration(math.log(duration, 2), 0)
         pitch = Pitch.fromhz(note.freq)
         return cls(pitch, duration)
 
@@ -96,7 +96,10 @@ class Duration(lysrc.Duration):
         if isinstance(tempo, (float, int)):
             tempo = tempo, 4
         secondsPerBeat = 60 / tempo[0]
-        numBeats = self.duration / secondsPerBeat
-        min(myList, key=lambda x: abs(x - myNumber))
-        round((1 / numBeats) * tempo[1], 0)
-        return int()
+        numBeats = duration / secondsPerBeat
+        noteValue = (1 / numBeats) * tempo[1]  # converts to absolute note
+        validValues = itertools.chain.from_iterable((2**x, 2/3 * 2**x) for x in range(5+1))
+        note = min(validValues, key=lambda x: abs(x - noteValue))  # todo convert this to a real duration
+        # this is really hacky
+        dot = validValues.index(note) % 2  # if the index is even, no dot. If odd, dot
+        return cls(int(math.log(int(note), 2)), dot)
