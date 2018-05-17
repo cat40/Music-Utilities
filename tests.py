@@ -75,5 +75,5 @@ testly('cmajorpiano.wav', [Instrument(60, preset=PIANO)], 60, True)  # todo figu
 # testly('4 strings pizz.wav', [Instrument(80, preset=VIOLA)], 80, True)
 # testInternals('cmajorpiano.wav')
 # testly('Battle-Cry-of-Freedom.wav', [Instrument(60, preset=PIANO)], 60, True, prop=True)
-testly('Isle-of-Innisfree.wav', [Instrument(60, preset=PIANO)], 60, True, prop=True)
+testly('Isle-of-Innisfree.wav', [Instrument(100, preset=PIANO)], 100, True, prop=True)
 # testly('Lovely Piano Song.mp3', [Instrument(105, preset=PIANO)], 105, True)

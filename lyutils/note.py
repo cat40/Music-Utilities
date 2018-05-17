@@ -97,9 +97,11 @@ class Duration(lysrc.Duration):
             tempo = tempo, 4
         secondsPerBeat = 60 / tempo[0]
         numBeats = duration / secondsPerBeat
+        print(numBeats, duration)
         noteValue = (1 / numBeats) * tempo[1]  # converts to absolute note
-        validValues = itertools.chain.from_iterable((2**x, 2/3 * 2**x) for x in range(5+1))
-        note = min(validValues, key=lambda x: abs(x - noteValue))  # todo convert this to a real duration
-        # this is really hacky
+        print(noteValue)
+        validValues = list(itertools.chain.from_iterable((2**x, 2/3 * 2**x) for x in range(5+1)))
+        note = min(validValues, key=lambda x: abs(x - noteValue))
+        print(note)
         dot = validValues.index(note) % 2  # if the index is even, no dot. If odd, dot
-        return cls(int(math.log(int(note), 2)), dot)
+        return cls(int(math.log(int(note/(2/3)), 2)), dot)
