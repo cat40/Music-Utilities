@@ -50,7 +50,7 @@ def testly(fname, instruments, tempo, output=True, prop=False):
     testpath = '.\\testsp\\' if prop else TESTPATH
     resultspath = '.\\testsp\\results' if prop else RESULTSPATH
     if prop and not (os.path.exists(testpath) and os.path.exists(resultspath)):
-        warnings.warn('Proprietary test or result path not found. Moving to next test')
+        warnings.warn('Proprietary test or result path not found. Skipping this test')
         return
     a = audioutils.LibrosaObject(os.path.join(testpath, fname))
     a.getNotes()
