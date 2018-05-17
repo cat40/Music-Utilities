@@ -39,15 +39,16 @@ class Note(object):
 
     def toInt(self, tempo):
         '''
-        parameters:
-        tempo can be a number or a tuple (bpm, note_base) where note_base is the note that gets the beat
+        :param duration:
+        :param tempo: can be a number or a tuple (bpm, note_base) where note_base is the note that gets the beat
         If tempo is a single number, quarter note base will be assumed
+        :return:
         TODO: add support for dotted notes
-        this might end up as a class method of Duration in lyutils later
         '''
         # convert an integer tempo to a tuple tempo (assumes quarter note base
         if isinstance(tempo, (float, int)):
             tempo = tempo, 4
-        secondsPerBeat = 60/tempo[0]
+        secondsPerBeat = 60 / tempo[0]
         numBeats = self.duration / secondsPerBeat
-        return int(round((1/numBeats) * tempo[1], 0))
+        thing = round((1 / numBeats) * tempo[1], 0)
+        return int(thing)

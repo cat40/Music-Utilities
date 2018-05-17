@@ -82,3 +82,21 @@ class Duration(lysrc.Duration):
         self.dots = dots  # number of dots
         if factor is not None:
             self.factor = factor  # todo: figure out what this does
+
+    @classmethod
+    def fromtime(cls, duration, tempo):
+        '''
+        :param duration:
+        :param tempo: can be a number or a tuple (bpm, note_base) where note_base is the note that gets the beat
+        If tempo is a single number, quarter note base will be assumed
+        :return:
+        TODO: add support for dotted notes
+        '''
+        # convert an integer tempo to a tuple tempo (assumes quarter note base
+        if isinstance(tempo, (float, int)):
+            tempo = tempo, 4
+        secondsPerBeat = 60 / tempo[0]
+        numBeats = self.duration / secondsPerBeat
+        min(myList, key=lambda x: abs(x - myNumber))
+        round((1 / numBeats) * tempo[1], 0)
+        return int()
