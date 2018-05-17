@@ -36,9 +36,7 @@ def genChords(progressions):
             if not callable(prog):
                 n = len(prog)
             else: raise
-        gen = list(genhelper(n, key, prog))
-        chords = Progressions.to_chords(gen, key)
-        chords.extend(chords)
+        chords.extend(Progressions.to_chords(genhelper(n, key, prog), key))
     return chords
 
 
