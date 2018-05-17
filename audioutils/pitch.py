@@ -144,14 +144,10 @@ def fixOctave2(autocorr, note, sr, thresholdF, maxfreq=4000):
     period = 1/note * sr  # converts the note back in the period (in samples)
     minperiod = sr // maxfreq
     autocorrArgMax = autocorr.argmax()  # this is the same as the period found above
-    print('note', note, 'period', period, 'argmax', autocorrArgMax)
-    print(minperiod)
     maxMultiplier = int(round(period // minperiod, 0))
-    print('maxmul', maxMultiplier)
     for multiplier in range(maxMultiplier, 1-1, -1):
         for mul in range(1, multiplier):
             tempPeriod = int(round(mul * period/multiplier, 0))
-            print(multiplier, mul, tempPeriod)
             if autocorr[tempPeriod] < thresholdF(note, sr/tempPeriod) * autocorr[autocorrArgMax]:
                 break
         else:  # for loop was not broken
