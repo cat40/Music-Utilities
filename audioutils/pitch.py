@@ -220,7 +220,26 @@ def exp(note, guess):
 def log(note, guess):
     '''
     this one seems to work best at the moment
+    sometimes goes a bit too low
     :return: multiplier (0, oo)
     '''
     a = 30
     return math.log((guess+a)/a, 10)
+
+
+def SPA(autocorr, note, sr,):
+    '''
+    :param autocorr:
+    :param note:
+    :param sr:
+    :return:
+    An implementation of Spectrum Peak Analysis as described in High Accuracy and Octave Error Immune Pitch
+    Detection Algorithms by M. Dziubinski and B. Kostek
+
+    todo: adjust M so that M*d <= Ha
+    '''
+    M = 20  # the harmonic number of the original signal the note is assumed to be at
+    fundamentals = [note/i for i in range(1, M+1)]
+    K = sr // M
+    fundamentalMatrix = [[f*j for j in range(1, K+1)] for f in fundamentals]
+    pass  # not finished yet
