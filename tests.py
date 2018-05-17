@@ -15,6 +15,9 @@ RESULTSPATH = '.\\tests\\results\\'
 
 '''
 TODO: add presets for each instrument to determine how onsets should be detected and what pitches to convert to notes
+Possible key detection: run a pitch analysis of the whole track (can skip octave correction part) to determine dominant pitch
+    Possibly try to compress track down to one octave first? (transpose all notes outside of that octave into it)
+    Could also take the weighted average of all found notes, after removing octave component
 '''
 
 
