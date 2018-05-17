@@ -5,8 +5,9 @@ import lyutils # unused at the moment, but here to make sure the import works
 from audioutils import VIOLIN, VIOLA, CELLO, PIANO, Instrument
 import midiutils
 
-# todo try a pitch algoritom by getting the note, then getting the octave by examaning harmonics
 # todo reorganize audioutils into seperate files for pitch and onset detection stuff
+# todo try making a stream type music object where it is read in order through a while loop and can have attributes like current_key and current_tempo
+
 
 
 TESTPATH = '.\\tests\\'

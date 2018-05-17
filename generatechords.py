@@ -7,6 +7,7 @@ import random
 This file will generate chords, randomly or based on a specified progression
 '''
 
+
 def genhelper(n, key, progression):
     '''
     :param n: Number of chords to generate. Need not be a multiple of the progression length
@@ -16,7 +17,6 @@ def genhelper(n, key, progression):
     '''
     for i in range(n):
         if callable(progression):
-            print('callable')
             yield progression(i, key)
         else:
             yield progression[len(progression) % i]
@@ -36,7 +36,9 @@ def genChords(progressions):
             if not callable(prog):
                 n = len(prog)
             else: raise
-        chords.extend(Progressions.to_chords(genhelper(n, key, prog)))
+        gen = list(genhelper(n, key, prog))
+        chords = Progressions.to_chords(gen, key)
+        chords.extend(chords)
     return chords
 
 
@@ -58,8 +60,6 @@ def toly(chords, duration, instrument, octave):
     todo: expand octave to allow octave changing
     :return: None. Instrument's sequence has been modified
     '''
-    print('chords', len(chords))
-    print(chords)
     pitches = (list(map(lambda x: toPitch(x, octave), chord)) for chord in chords)
     notes = (lyutils.Note(pitch, duration) for pitch in pitches)
     instrument.sequence.extend(notes)
@@ -80,7 +80,8 @@ def randomchordsimple(_, __):
     :param __: garbage can for the key argument supplied in genhelper
     :return: a random chord in the specified, using only the natural diatonic triads
     '''
-    return lyutils.romannumerals(random.randint(1, 7)).upper()
+    return random.choice('I II III IV V VI VII'.split(' '))
+
 
 # run tests
 if __name__ == '__main__':
