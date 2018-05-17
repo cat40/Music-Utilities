@@ -4,6 +4,7 @@ import os
 import lyutils # unused at the moment, but here to make sure the import works
 from audioutils import VIOLIN, VIOLA, CELLO, PIANO, Instrument
 import midiutils
+import warnings
 
 # todo reorganize audioutils into seperate files for pitch and onset detection stuff
 # todo try making a stream type music object where it is read in order through a while loop and can have attributes like current_key and current_tempo
@@ -48,6 +49,9 @@ def testly(fname, instruments, tempo, output=True, prop=False):
     print(fname)
     testpath = '.\\testsp\\' if prop else TESTPATH
     resultspath = '.\\testsp\\results' if prop else RESULTSPATH
+    if prop and not (os.path.exists(testpath) and os.path.exists(resultspath)):
+        warnings.warn('Proprietary test or result path not found. Moving to next test')
+        return
     a = audioutils.LibrosaObject(os.path.join(testpath, fname))
     a.getNotes()
     if output:
@@ -69,6 +73,7 @@ instruments = [VIOLIN, CELLO]
 # test('cmajor.wav', instruments, True)
 testly('cmajorpiano.wav', [Instrument(60, preset=PIANO)], 60, True)  # todo figure out why tempo is in both audioutils.Instrument and lyutils.music
 # testly('4 strings pizz.wav', [Instrument(80, preset=VIOLA)], 80, True)
-testInternals('cmajorpiano.wav')
-testly('Battle-Cry-of-Freedom.wav', [Instrument(60, preset=PIANO)], 60, True, prop=True)
+# testInternals('cmajorpiano.wav')
+# testly('Battle-Cry-of-Freedom.wav', [Instrument(60, preset=PIANO)], 60, True, prop=True)
+testly('Isle-of-Innisfree.wav', [Instrument(60, preset=PIANO)], 60, True, prop=True)
 # testly('Lovely Piano Song.mp3', [Instrument(105, preset=PIANO)], 105, True)
