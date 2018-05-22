@@ -22,6 +22,7 @@ create a data structure to store the value of each button and the time it change
     for every n frames of the audio
 make a class for instruments
 '''
+import sys
 import time
 import tkinter as tk
 import tkinter.filedialog
@@ -29,9 +30,6 @@ from pygame import mixer
 
 MAXFPS = 60
 PERIOD = 1/MAXFPS
-
-window = tk.Tk()
-window.protocol('WM_DELETE_WINDOW', window.destroy)  # doesn't seem to work at the moment
 
 
 def newScale(init=0, **kwargs):
@@ -87,6 +85,14 @@ def openMusicFile():
         music = mixer.Sound(fname)
 
 
+def quit():
+    window.destroy()
+    sys.exit()
+
+window = tk.Tk()
+window.protocol('WM_DELETE_WINDOW', quit)  # doesn't seem to work at the moment
+window.geometry('400x400')
+
 mixer.init()
 
 mainmenu = tk.Menu(window)
@@ -100,7 +106,7 @@ window.config(menu=mainmenu)
 
 
 # static values
-numInstruments = newScale(init=1, orient=tk.HORIZONTAL, from_=1, to=15)  # cannot be changed during execution
+numInstruments = newScale(init=1, label='Number of Instruments', orient=tk.HORIZONTAL, from_=1, to=15, length=250)  # cannot be changed during execution
 
 startButton = tk.Button(window, text='Start', command=start)
 playButton = tk.Button(window, text='Play Music', command=play)
@@ -111,8 +117,9 @@ pauseButton.pack()
 
 # dynamic values
 # global
-tempo = newScale(60, orient=tk.HORIZONTAL, from_=0, to=300, label='Tempo')
-key = tk.Spinbox(window, values=('C', 'D', 'E', 'F', 'G', 'A', 'B'), wrap=True)
+tempoSlide = newScale(60, orient=tk.HORIZONTAL, from_=0, to=300, label='Tempo', length=250)
+tempoBox = tk.Spinbox(window, from_=0, to=300, wrap=False, xscrollcommand=tempoSlide.set)
+key = tk.Spinbox(window, label='Key', values=('C', 'D', 'E', 'F', 'G', 'A', 'B'), wrap=True)
 key.pack()
 
 
