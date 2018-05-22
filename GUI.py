@@ -68,17 +68,34 @@ def play():
                 mixer.unpause()
         prevPauseState = isPaused
 
+
 isPaused = False
 def pause():
     global isPaused
     isPaused = not isPaused
 
 
+def savePreset():
+    pass
+
+def loadPreset():
+    pass
+
+def openMusicFile():
+    pass
+
+
 mixer.init()
+
+mainmenu = tk.Menu(window)
+filemenu = tk.Menu(mainmenu, tearoff=0)
+filemenu.add_command('Save Preset')
+filemenu.add_command('Open Preset')
+filemenu.add_command('Open Music File')
+
+
 # static values
 numInstruments = newScale(init=1, orient=tk.HORIZONTAL, from_=1, to=15)  # cannot be changed during execution
-fileBox = tk.Entry(window, text='File Name')
-fileBox.pack()
 
 startButton = tk.Button(window, text='Start', command=start)
 playButton = tk.Button(window, text='Play Music', command=play)
