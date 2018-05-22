@@ -117,9 +117,11 @@ pauseButton.pack()
 
 # dynamic values
 # global
-tempoSlide = newScale(60, orient=tk.HORIZONTAL, from_=0, to=300, label='Tempo', length=250)
-tempoBox = tk.Spinbox(window, from_=0, to=300, wrap=False, xscrollcommand=tempoSlide.set)
-key = tk.Spinbox(window, label='Key', values=('C', 'D', 'E', 'F', 'G', 'A', 'B'), wrap=True)
+tempo = tk.IntVar()
+tempoSlide = newScale(60, orient=tk.HORIZONTAL, from_=0, to=300, label='Tempo', length=250, variable=tempo)
+tempoBox = tk.Spinbox(window, from_=0, to=300, wrap=False, textvariable=tempo)
+tempoBox.pack()
+key = tk.Spinbox(window, values=('C', 'D', 'E', 'F', 'G', 'A', 'B'), wrap=True)
 key.pack()
 
 
