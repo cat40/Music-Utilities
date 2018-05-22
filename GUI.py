@@ -24,6 +24,7 @@ make a class for instruments
 '''
 import time
 import tkinter as tk
+import tkinter.filedialog
 from pygame import mixer
 
 MAXFPS = 60
@@ -53,8 +54,6 @@ def start():
 
 def play():
     prevPauseState = False
-    fname = fileBox.get()
-    music = mixer.Sound(fname)
     music.play()
     while True:
         window.update()
@@ -82,7 +81,10 @@ def loadPreset():
     pass
 
 def openMusicFile():
-    pass
+    global music
+    fname = tk.filedialog.askopenfile()
+    if fname is not None:  # user did not press the cancel button
+        music = mixer.Sound(fname)
 
 
 mixer.init()
@@ -91,7 +93,7 @@ mainmenu = tk.Menu(window)
 filemenu = tk.Menu(mainmenu, tearoff=0)
 filemenu.add_command(label='Save Preset')
 filemenu.add_command(label='Open Preset')
-filemenu.add_command(label='Open Music File')
+filemenu.add_command(label='Open Music File', command=openMusicFile)
 mainmenu.add_cascade(label='File', menu=filemenu)
 
 window.config(menu=mainmenu)
