@@ -89,9 +89,12 @@ mixer.init()
 
 mainmenu = tk.Menu(window)
 filemenu = tk.Menu(mainmenu, tearoff=0)
-filemenu.add_command('Save Preset')
-filemenu.add_command('Open Preset')
-filemenu.add_command('Open Music File')
+filemenu.add_command(label='Save Preset')
+filemenu.add_command(label='Open Preset')
+filemenu.add_command(label='Open Music File')
+mainmenu.add_cascade(label='File', menu=filemenu)
+
+window.config(menu=mainmenu)
 
 
 # static values
