@@ -22,6 +22,7 @@ create a data structure to store the value of each button and the time it change
     for every n frames of the audio
 make a class for instruments
 '''
+import os
 import sys
 import time
 import tkinter as tk
@@ -82,7 +83,7 @@ def openMusicFile():
     global music
     fname = tk.filedialog.askopenfile()
     if fname is not None:  # user did not press the cancel button
-        music = mixer.Sound(fname)
+        music = mixer.Sound(fname.name)
 
 
 def quit():
@@ -93,6 +94,7 @@ window = tk.Tk()
 window.protocol('WM_DELETE_WINDOW', quit)  # doesn't seem to work at the moment
 window.geometry('400x400')
 
+mixer.pre_init(44100, 16, 2, 4096)
 mixer.init()
 
 mainmenu = tk.Menu(window)
