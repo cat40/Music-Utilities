@@ -22,12 +22,11 @@ create a data structure to store the value of each button and the time it change
     for every n frames of the audio
 make a class for instruments
 '''
-import os
 import sys
 import time
 import tkinter as tk
 import tkinter.filedialog
-from pygame import mixer
+import vlc
 
 MAXFPS = 60
 PERIOD = 1/MAXFPS
@@ -52,50 +51,42 @@ def start():
 
 
 def play():
-    prevPauseState = False
     music.play()
-    while True:
-        window.update()
-        # todo get values form all the buttons and thingies
-        if not mixer.get_busy():  # music is done playing
-            return  # todo put stuff into the data structure here
-        if prevPauseState != isPaused:
-            if isPaused:
-                mixer.pause()
-            else:
-                mixer.unpause()
-        prevPauseState = isPaused
 
 
 isPaused = False
 def pause():
     global isPaused
+    if isPaused:
+        music.play()
+    else:
+        music.pause()
     isPaused = not isPaused
 
 
 def savePreset():
     pass
 
+
 def loadPreset():
     pass
+
 
 def openMusicFile():
     global music
     fname = tk.filedialog.askopenfile()
     if fname is not None:  # user did not press the cancel button
-        music = mixer.Sound(fname.name)
+        music = vlc.MediaPlayer(fname)
 
 
-def quit():
+def goByBy():
     window.destroy()
     sys.exit()
 
-window = tk.Tk()
-window.protocol('WM_DELETE_WINDOW', quit)  # doesn't seem to work at the moment
-window.geometry('400x400')
 
-mixer.pre_init(44100, 16, 2, 4096)
-mixer.init()
+window = tk.Tk()
+window.protocol('WM_DELETE_WINDOW', goByBy)  # doesn't seem to work at the moment
+window.geometry('400x400')
 
 mainmenu = tk.Menu(window)
 filemenu = tk.Menu(mainmenu, tearoff=0)
