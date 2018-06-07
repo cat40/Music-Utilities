@@ -9,6 +9,7 @@ import warnings
 # todo reorganize audioutils into seperate files for pitch and onset detection stuff
 # todo try making a stream type music object where it is read in order through a while loop and can have attributes like current_key and current_tempo
 #todo fix dotted half notes
+# todo have onset detection move the midline based on a sliding window instead of the total mean volume
 
 
 TESTPATH = '.\\tests\\'

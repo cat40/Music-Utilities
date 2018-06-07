@@ -117,6 +117,8 @@ tempoBox.pack()
 key = tk.Spinbox(window, values=('C', 'D', 'E', 'F', 'G', 'A', 'B'), wrap=True)
 key.pack()
 
+variables = [tempo, key]
+
 
 while True:
     window.update()
