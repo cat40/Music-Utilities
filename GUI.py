@@ -28,6 +28,8 @@ import tkinter as tk
 import tkinter.filedialog
 import vlc
 
+from dynamic import Dynamic
+
 MAXFPS = 60
 PERIOD = 1/MAXFPS
 
@@ -54,14 +56,17 @@ def play():
     music.play()
 
 
-isPaused = False
+# isPaused = False
+# def pause():
+#     global isPaused
+#     if isPaused:
+#         music.play()
+#     else:
+#         music.pause()
+#     isPaused = not isPaused
+
 def pause():
-    global isPaused
-    if isPaused:
-        music.play()
-    else:
-        music.pause()
-    isPaused = not isPaused
+    music.pause()
 
 
 def savePreset():
@@ -117,7 +122,12 @@ tempoBox.pack()
 key = tk.Spinbox(window, values=('C', 'D', 'E', 'F', 'G', 'A', 'B'), wrap=True)
 key.pack()
 
-variables = [tempo, key]
+variables = [Dynamic(tempo), Dynamic(key)]
+
+
+def updateVariables():
+    for var in variables:
+        var.update()
 
 
 while True:
