@@ -22,10 +22,13 @@ create a data structure to store the value of each button and the time it change
     for every n frames of the audio
 make a class for instruments
 '''
+import os
 import sys
 import time
 import tkinter as tk
 import tkinter.filedialog
+import urllib.parse
+
 import vlc
 
 from dynamic import Dynamic
@@ -81,6 +84,8 @@ def openMusicFile():
     global music
     fname = tk.filedialog.askopenfile()
     if fname is not None:  # user did not press the cancel button
+        fname = urllib.parse.quote(bytes(fname), safe=os.sep)
+        print(fname)
         music = vlc.MediaPlayer(fname)
 
 
