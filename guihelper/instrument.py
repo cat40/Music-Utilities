@@ -21,9 +21,13 @@ class Instrument(object):
         self.name = name
         # static variables
         self.usePercussive = tk.BooleanVar()
-        self.usePercussiveButtons = tk.Checkbutton(self.window, text="Use Percussive Onsets", variable=self.usePercussive,
+        self.usePercussiveButton = tk.Checkbutton(self.window, text="Use Percussive Onsets", variable=self.usePercussive,
                                                    onvalue=True, offvalue=False)
-        self.usePercussive.set(True)
+        self.usePercussiveButton.select()
+        self.useHarmonic = tk.BooleanVar()
+        self.useHarmonicButton = tk.Checkbutton(self.window, text="Use Harmonic Onsets", variable=self.useHarmonic,
+                                                   onvalue=True, offvalue=False)
+        self.useHarmonicButton.select()
         # dynamic variables
         self.lowerRangeBound = tk.IntVar()  # midi number
         self.lowerRangeSlider = tk.Scale(self.window, orient=tk.HORIZONTAL, from_=0, to=127,
