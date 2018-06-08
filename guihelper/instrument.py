@@ -19,6 +19,12 @@ class Instrument(object):
         globalid += 1
         self.window = window
         self.name = name
+        # static variables
+        self.usePercussive = tk.BooleanVar()
+        self.usePercussiveButtons = tk.Checkbutton(self.window, text="Use Percussive Onsets", variable=self.usePercussive,
+                                                   onvalue=True, offvalue=False)
+        self.usePercussive.set(True)
+        # dynamic variables
         self.lowerRangeBound = tk.IntVar()  # midi number
         self.lowerRangeSlider = tk.Scale(self.window, orient=tk.HORIZONTAL, from_=0, to=127,
                                          label='Lower range bound', length=250, variable=self.lowerRangeBound)
