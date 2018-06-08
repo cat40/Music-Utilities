@@ -44,12 +44,14 @@ def newScale(init=0, **kwargs):
 
 def start():
     # window.mainloop()
+    music.stop()
     prevt = time.clock()
     while True:
+        window.update()
         if time.clock() - prevt < PERIOD:
             continue
-        window.update()
-        print(numInstruments.get())
+        for var in variables:
+            var.update()
         prevt = time.clock()
 
 
