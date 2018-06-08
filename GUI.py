@@ -74,8 +74,11 @@ def play():
 #         music.pause()
 #     isPaused = not isPaused
 
+isPaused = False
 def pause():
+    global isPaused
     music.pause()
+    isPaused = not isPaused
 
 
 def savePreset():
