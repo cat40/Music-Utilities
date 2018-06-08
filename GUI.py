@@ -26,10 +26,9 @@ import sys
 import time
 import tkinter as tk
 import tkinter.filedialog
-
 import vlc
 
-from dynamic import Dynamic
+from guihelper import Dynamic
 
 MAXFPS = 60
 PERIOD = 1/MAXFPS
