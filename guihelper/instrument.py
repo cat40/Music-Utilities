@@ -31,3 +31,5 @@ class Instrument(object):
     def displayInputs(self):
         self.lowerRangeSlider.pack()
         self.lowerRangeBox.pack()
+        self.upperRangeBox.pack()
+        self.upperRangeSlider.pack()
