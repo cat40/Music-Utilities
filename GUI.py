@@ -53,8 +53,14 @@ def start():
         prevt = time.clock()
 
 
+isPlaying = False
 def play():
-    music.play()
+    global isPlaying
+    if not isPlaying:
+        music.play()
+    else:
+        music.stop()
+    isPlaying = not isPlaying
 
 
 # isPaused = False
@@ -108,7 +114,7 @@ window.config(menu=mainmenu)
 numInstruments = newScale(init=1, label='Number of Instruments', orient=tk.HORIZONTAL, from_=1, to=15, length=250)  # cannot be changed during execution
 
 startButton = tk.Button(window, text='Start', command=start)
-playButton = tk.Button(window, text='Start Music', command=play)
+playButton = tk.Button(window, text='Start/Stop Music', command=play)
 pauseButton = tk.Button(window, text='Pause/Play Music', command=pause)
 startButton.pack()
 playButton.pack()
