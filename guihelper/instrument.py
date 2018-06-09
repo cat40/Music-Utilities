@@ -85,6 +85,10 @@ class Instrument(object):
         pass
 
     def disableStaticVariables(self):
-        pass
+        for inpt in self.staticInputs:
+            inpt.config(state='disabled')
 
     def enableStaticVariables(self):
+        for inpt in self.staticInputs:
+            inpt.config(state='enabled')
+            
