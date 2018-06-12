@@ -36,11 +36,11 @@ class Instrument(object):
         self.octaveUpperBound = tk.IntVar()
         self.octaveUpperBoundSlider = tk.Scale(self.window, orient=tk.HORIZONTAL, from_=0, to=8,
                                                label='Upper Octave Bound', length=250, variable=self.octaveUpperBound)
-        self.octaveUpperBoundBox = tk.Spinbox(self.window, variable=self.octaveUpperBound)
+        self.octaveUpperBoundBox = tk.Spinbox(self.window, textvariable=self.octaveUpperBound)
         self.octaveLowerBound = tk.IntVar()
         self.octaveLowerBoundSlider = tk.Scale(self.window, orient=tk.HORIZONTAL, from_=0, to=8,
                                                label='Lower Octave Bound', length=250, variable=self.octaveLowerBound)
-        self.octaveLowerBoundBox = tk.Spinbox(self.window, variable=self.octaveLowerBound)
+        self.octaveLowerBoundBox = tk.Spinbox(self.window, textvariable=self.octaveLowerBound)
         self.staticVariables = [self.usePercussive, self.useHarmonic, self.useOctaves,
                         self.octaveUpperBound, self.octaveLowerBound]
         self.staticInputs = [self.usePercussiveButton, self.useOctavesButton, self.useHarmonicButton,
@@ -50,11 +50,11 @@ class Instrument(object):
         self.lowerRangeBound = tk.IntVar()  # midi number
         self.lowerRangeSlider = tk.Scale(self.window, orient=tk.HORIZONTAL, from_=0, to=127,
                                          label='Lower range bound', length=250, variable=self.lowerRangeBound)
-        self.lowerRangeBox = tk.Spinbox(self.window, variable=self.lowerRangeBound)
+        self.lowerRangeBox = tk.Spinbox(self.window, textvariable=self.lowerRangeBound)
         self.upperRangeBound = tk.IntVar()  # midi number
         self.upperRangeSlider = tk.Scale(self.window, orient=tk.HORIZONTAL, from_=0, to=127,
                                          label='Lower range bound', length=250, variable=self.upperRangeBound)
-        self.upperRangeBox = tk.Spinbox(self.window, variable=self.upperRangeBound)
+        self.upperRangeBox = tk.Spinbox(self.window, textvariable=self.upperRangeBound)
         self.dynamicVariables = [self.lowerRangeBound, self.upperRangeBound]
         self.dynamicInputs = [self.lowerRangeBox, self.lowerRangeSlider, self.upperRangeSlider, self.upperRangeBox]
 

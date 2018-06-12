@@ -28,7 +28,7 @@ import tkinter as tk
 import tkinter.filedialog
 import vlc
 
-from guihelper import Dynamic
+from guihelper import Dynamic, Instrument
 
 MAXFPS = 60
 PERIOD = 1/MAXFPS
@@ -134,6 +134,10 @@ key = tk.Spinbox(window, values=('C', 'D', 'E', 'F', 'G', 'A', 'B'), wrap=True)
 key.pack()
 
 variables = [Dynamic(tempo), Dynamic(key)]
+
+# test instrument
+inst = Instrument(window, 'test')
+inst.displayInputs()
 
 
 def updateVariables():
