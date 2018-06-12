@@ -82,7 +82,7 @@ class Instrument(object):
         Inputs are disabled once read
         :return: None
         '''
-        pass
+        self.disableStaticVariables()
 
     def disableStaticVariables(self):
         for inpt in self.staticInputs:
@@ -91,4 +91,3 @@ class Instrument(object):
     def enableStaticVariables(self):
         for inpt in self.staticInputs:
             inpt.config(state='enabled')
-            
