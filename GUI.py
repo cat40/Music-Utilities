@@ -88,12 +88,12 @@ def loadPreset():
     pass
 
 
+
 def openMusicFile():
     global music
     fname = tk.filedialog.askopenfile()
     if fname is not None:  # user did not press the cancel button
         music = vlc.MediaPlayer(fname.name)
-
 
 def goByBy():
     window.destroy()
