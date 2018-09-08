@@ -26,7 +26,7 @@ A class for putting instruments into lilypond
     The parameter name must be a valid midi name
 '''
 class Instrument(object):
-    def __init__(self, name, sequence, paramindex=None, midiname=None, clef=None, useGlobal=True, useRelative=True, relative="'"):
+    def __init__(self, name, sequence, paramindex=None, midiname=None, clef=None, useGlobal=True, useRelative=False, relative="'"):
         global index
         if name == 'violincello':
             name = 'cello'
