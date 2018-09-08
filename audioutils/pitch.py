@@ -9,6 +9,12 @@ from scipy import signal
 
 '''
 A collection of static methods for dealing with pitch
+
+
+octave fixing ideas:
+use multiple methods and take a vote (possibly weighted by method accuracy?)
+todo analyze the spetographs of signals who's octaves are detected correclty and incorrectly and look for differences
+    also look for a pattern in the note names
 '''
 # todo: make a single pitch function with a method argument
 
