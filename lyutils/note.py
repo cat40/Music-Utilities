@@ -3,9 +3,7 @@ import math
 import librosa
 import itertools
 
-# todo seperate __str__ into a seperate _to_string() internal method, which is called in __str__ to make autogenerating tests easier
-# todo actually, about the above.. probably a good idea just to refactor the code to avoid the whole builtin functions have wierd behavoir when called on this object thing
-
+# todo refactor code to avoid using str() to convert to lilypond
 class Note(object):
     '''notes:
     currently, a duration must be specified (unlike in lilypond, where a note automatically
@@ -35,12 +33,16 @@ class Note(object):
         pitch = Pitch.fromhz(note.freq)
         return cls(pitch, duration)
 
-    def __str__(self):
+    def to_lilypond_output(self):
         if len(self.pitches) > 1:
             string = '<' + ' '.join(map(str, self.pitches)) + '>'
         else:
             string = str(self.pitches[0])
         return string + str(self.duration)
+
+    def __str__(self):
+        ''' this has been kept only until code can be refactored to avoid usage of str to convert to lilypond'''
+        return self.to_lilypond_output()
 
 
 '''
