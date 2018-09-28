@@ -3,6 +3,8 @@ import math
 import librosa
 import itertools
 
+# todo seperate __str__ into a seperate _to_string() internal method, which is called in __str__ to make autogenerating tests easier
+# todo actually, about the above.. probably a good idea just to refactor the code to avoid the whole builtin functions have wierd behavoir when called on this object thing
 
 class Note(object):
     '''notes:

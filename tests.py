@@ -60,6 +60,7 @@ def testly(fname, instruments, tempo, output=True, prop=False):
     insts = a.splittoinstruments(instruments)
     music = lyutils.Music(tempo, insts)
     music.write(os.path.join(resultspath, fname+'.ly'))
+    print('done')
 
 
 def testInternals(fname):
