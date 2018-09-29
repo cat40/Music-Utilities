@@ -33,7 +33,7 @@ class Note(object):
         pitch = Pitch.fromhz(note.freq)
         return cls(pitch, duration)
 
-    def to_lilypond_output(self):
+    def to_lilypond_string(self):
         if len(self.pitches) > 1:
             string = '<' + ' '.join(map(str, self.pitches)) + '>'
         else:
@@ -42,7 +42,7 @@ class Note(object):
 
     def __str__(self):
         ''' this has been kept only until code can be refactored to avoid usage of str to convert to lilypond'''
-        return self.to_lilypond_output()
+        return self.to_lilypond_string()
 
 
 '''

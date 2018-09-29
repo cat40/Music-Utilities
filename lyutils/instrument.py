@@ -53,9 +53,9 @@ class Instrument(object):
     def from_raw_notes(cls, notes, relative):
         pass # todo put stuff from audioutils.convert in here, also solves import problem in audioutils importhing this
 
-    def __str__(self):
+    def to_lilypond_string(self):
         relative = self.relative if any(s in self.relative for s in 'abcdefg') else 'c' + self.relative
-        # relPitch = lysrc.Pitch() # todo: un hardcode this (right now it's always relative to c4
+        # relPitch = lysrc.Pitch() # todo: un hardcode this (right now it's always relative to c4)
         # relPitch.step=0
         # relPitch.octave=1
         # relPitch.alteration=0
@@ -73,6 +73,10 @@ class Instrument(object):
             string += str(thing) + ' '
         string += '}'
         return string
+
+    def __str__(self):
+        return self.to_lilypond_string()
+
 
     def staffblock(self):
         string = self.name + 'Part' + ' = \\new Staff \\with {\n'
