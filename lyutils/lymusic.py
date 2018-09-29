@@ -15,10 +15,7 @@ class Music(object):
         self.instruments = instruments if isinstance(instruments[0], Instrument) \
             else [instrument.convert2(tempo) for instrument in instruments]
 
-    def __repr__(self):
-        return 'Instrument object with %s instruments' % len(self.instruments) # todo: make this more descriptive
-
-    def __str__(self):
+    def to_lilypond_string(self):
         string = '\\version "2.18.2"\n'
         # header
         if self.header:
@@ -41,6 +38,12 @@ class Music(object):
         string += '>>\n\\layout {}\n\\midi {}\n}'
         return string
 
+    def __repr__(self):
+        return 'Instrument object with %s instruments' % len(self.instruments) # todo: make this more descriptive
+
+    def __str__(self):
+        return self.to_lilypond_string()
+
     def write(self, fname, mode='w'):
         with open(fname, mode) as f:
-            f.write(str(self))
+            f.write(self.to_lilypond_string())
