@@ -4,13 +4,16 @@ class lyObj(object):
         self.base = base  # might not need this if child attributes are visible to the parent class
         self.entries = list(entries)
 
-    def __str__(self):
+    def to_lilypond_string(self):
         product = self.base
         if self.hasbrackets: product += '\n{'
         else: product += ' '
         product += ' '.join(self.entries)
         if self.hasbrackets: product += '\n}'
         return product
+
+    def __str__(self):
+        return self.to_lilypond_string()
 
     def __add__(self, other):
         if isinstance(other, str):
