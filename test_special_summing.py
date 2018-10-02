@@ -23,3 +23,7 @@ result = left_gain.overlay(right_gain).overlay(all_but_center)
 
 # Export merged audio file
 result.export('.\\tests\\results\\stereo_to_mono.wav', format='wav')
+
+# monotize it the normal way, for comparison:
+mono = left.overlay(right)
+mono.export('.\\tests\\results\\stereo_to_mono_bad.wav', format='wav')
