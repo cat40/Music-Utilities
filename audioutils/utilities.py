@@ -16,8 +16,8 @@ def sum_stereo_to_mono(left, right):
     # invert the right channel
     right_inverted = -1 * right
 
-    # combine right and left, to eliminate center
-    all_but_center = (left + right) * 0.5
+    # combine inverted right and left, to eliminate center
+    all_but_center = (left + right_inverted) * 0.5
 
     # halve the waveform of right and left channels to offset gain doubling of this algorithm
     left_gain = left * 0.5
