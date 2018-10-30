@@ -1,5 +1,6 @@
 import copy
 import math
+import sys
 
 import librosa
 import numpy
@@ -16,6 +17,8 @@ use multiple methods and take a vote (possibly weighted by method accuracy?)
 todo analyze the spetographs of signals who's octaves are detected correclty and incorrectly and look for differences
     also look for a pattern in the note names
 '''
+
+
 # todo: make a single pitch function with a method argument
 
 # copied from https://gist.github.com/endolith/148112
@@ -60,9 +63,10 @@ def getPitchCheap(y, sr, depth=1, fmin=16, fmax=4000):
         i = numpy.unravel_index(magnitudes.argmax(),
                                 magnitudes.shape)  # unravel_index transforms the bizzare integer returned by argmax into a tuple index
         pitch = pitches[i]
+        # break out of function before applying filters for no reason
         if _ == depth - 1:
             return pitch
-        # now look just at the waveform in the section of the predicted pitch
+        # now look just at the waveform in the section of the predicted pitch and looks for the pitch again to refine the guess
         radius = .25
         fmax = pitch * (1 + radius)
         fmin = pitch * (1 - radius)
@@ -78,7 +82,9 @@ def getPitch(y, sr):
     '''
     autocorr = autocorrelate(y)
     estimate = pitchFromAC(autocorr, sr, autocorrelated=True)
+    # if the pitch is withing frequency bounds - the interval (20hz, 4000hz)
     if 20 < estimate < 4000:  # todo make min and max frequencies keyword arguments
+        fixOctave3(y, sr, estimate)  # right now this is just here to test the method
         return fixOctave2(autocorr, estimate, sr, log)
     return 0
 
@@ -96,13 +102,14 @@ def pitchFromAC(y, sr, autocorrelated=False):
     imin = sr // fmax
     imax = sr // fmin
     autocorrelation = y if autocorrelated else autocorrelate(y)
+    # remove the components of the autocorrelation outside of min and max frequencies
     autocorrelation[:int(imin)] = 0
     autocorrelation[int(imax):] = 0
     timeShift = autocorrelation.argmax()  # find the maximum of the autocorrelation
     print('timeshift', timeShift)
     if not timeShift:
         return 0
-    return sr/timeShift # converts the period to a frequenct (timeShift is the number of samples,
+    return sr / timeShift  # converts the period to a frequenct (timeShift is the number of samples,
     # so divide by sampling rate to get time in seconds and then invert)
 
 
@@ -116,16 +123,16 @@ def fixOctave(autocorr, note, sr, threshold=.9, maxfreq=4000):
 
     Adapted from https://github.com/ad1269/Monophonic-Pitch-Detection
     '''
-    period = 1/note * sr  # converts the note back in the period (in samples)
+    period = 1 / note * sr  # converts the note back in the period (in samples)
     minperiod = sr // maxfreq
     autocorrArgMax = autocorr.argmax()  # this is the same as the period found above
     print('note', note, 'period', period, 'argmax', autocorrArgMax)
     print(minperiod)
     maxMultiplier = int(round(period // minperiod, 0))
     print('maxmul', maxMultiplier)
-    for multiplier in range(maxMultiplier, 1-1, -1):
+    for multiplier in range(maxMultiplier, 1 - 1, -1):
         for mul in range(1, multiplier):
-            tempPeriod = int(round(mul * period/multiplier, 0))
+            tempPeriod = int(round(mul * period / multiplier, 0))
             print(multiplier, mul, tempPeriod)
             if autocorr[tempPeriod] < threshold * autocorr[autocorrArgMax]:
                 break
@@ -147,18 +154,34 @@ def fixOctave2(autocorr, note, sr, thresholdF, maxfreq=4000):
 
     Adapted from https://github.com/ad1269/Monophonic-Pitch-Detection, with the exception of the threshold function
     '''
-    period = 1/note * sr  # converts the note back in the period (in samples)
+    period = 1 / note * sr  # converts the note back in the period (in samples)
     minperiod = sr // maxfreq
     autocorrArgMax = autocorr.argmax()  # this is the same as the period found above
     maxMultiplier = int(round(period // minperiod, 0))
-    for multiplier in range(maxMultiplier, 1-1, -1):
+    for multiplier in range(maxMultiplier, 1 - 1, -1):
         for mul in range(1, multiplier):
-            tempPeriod = int(round(mul * period/multiplier, 0))
-            if autocorr[tempPeriod] < thresholdF(note, sr/tempPeriod) * autocorr[autocorrArgMax]:
+            tempPeriod = int(round(mul * period / multiplier, 0))
+            if autocorr[tempPeriod] < thresholdF(note, sr / tempPeriod) * autocorr[autocorrArgMax]:
                 break
         else:  # for loop was not broken
             return note * multiplier
     raise Exception('no note was found')  # something went wrong
+
+
+def fixOctave3(y, sr, guess):
+    '''
+    Octave correction using HPS, as described here:
+        http://musicweb.ucsd.edu/~trsmyth/analysis/Harmonic_Product_Spectrum.html
+    :param y: the waveform to determine the pitch over
+    :param sr: sampling rate of the waveform
+    :param guess: Initial guess at pitch
+    :return:
+    '''
+    pitches, magnitudes = librosa.piptrack(y=y, sr=sr)
+    print("guess in pitches?", guess in pitches, file=sys.stderr)
+    indexOfGuess = numpy.where(pitches == guess)
+    print(indexOfGuess, file=sys.stderr)
+
 
 def autocorrelate(y, n=2):
     '''
@@ -169,8 +192,9 @@ def autocorrelate(y, n=2):
     '''
     prevAutocorr = numpy.fft.rfft(y)
     for _ in range(n):
-        prevAutocorr = prevAutocorr*numpy.conj(prevAutocorr)
+        prevAutocorr = prevAutocorr * numpy.conj(prevAutocorr)
     return numpy.fft.irfft(prevAutocorr)
+
 
 # just a wrapper for scipy.signal.butter for readability
 def helper_butter(sr, fmin=0, fmax=None, order=6, output='sos'):
@@ -204,9 +228,9 @@ def simpleinverse(note, guess):
     '''
     :return: multiplier (0, 1)
     '''
-    distance = guess-note
+    distance = guess - note
     scale = 350
-    return 1 - 1 / ((abs(distance)-scale)/scale)
+    return 1 - 1 / ((abs(distance) - scale) / scale)
 
 
 def fancy(note, guess):
@@ -220,7 +244,7 @@ def exp(note, guess):
     '''
     :return: multiplier [0, 1)
     '''
-    return 1 - 2**(-.005 * guess)
+    return 1 - 2 ** (-.005 * guess)
 
 
 def log(note, guess):
@@ -230,10 +254,10 @@ def log(note, guess):
     :return: multiplier (0, oo)
     '''
     a = 30
-    return math.log((guess+a)/a, 10)
+    return math.log((guess + a) / a, 10)
 
 
-def SPA(autocorr, note, sr,):
+def SPA(autocorr, note, sr, ):
     '''
     :param autocorr:
     :param note:
@@ -245,7 +269,7 @@ def SPA(autocorr, note, sr,):
     todo: adjust M so that M*d <= Ha
     '''
     M = 20  # the harmonic number of the original signal the note is assumed to be at
-    fundamentals = [note/i for i in range(1, M+1)]
+    fundamentals = [note / i for i in range(1, M + 1)]
     K = sr // M
-    fundamentalMatrix = [[f*j for j in range(1, K+1)] for f in fundamentals]
+    fundamentalMatrix = [[f * j for j in range(1, K + 1)] for f in fundamentals]
     pass  # not finished yet
