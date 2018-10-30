@@ -29,7 +29,8 @@ def getPitch(y, sr):
     :return: the estimated frequency of the waveform, in hz
     '''
     autocorr = autocorrelate(y)
-    estimate = pitchFromAC(autocorr, sr, autocorrelated=True)
+    # estimate = pitchFromAC(autocorr, sr, autocorrelated=True)
+    estimate = getPitchCheap(y, sr, depth=1)
     # if the pitch is withing frequency bounds - the interval (20hz, 4000hz)
     if 20 < estimate < 4000:  # todo make min and max frequencies keyword arguments
         fixOctave3(y, sr, estimate)  # right now this is just here to test the method
