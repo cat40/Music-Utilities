@@ -21,6 +21,22 @@ todo analyze the spetographs of signals who's octaves are detected correclty and
 
 # todo: make a single pitch function with a method argument
 
+
+def getPitch(y, sr):
+    '''
+    :param y: the waveform to run pitch detection on
+    :param sr: the sampling rate of the waveform
+    :return: the estimated frequency of the waveform, in hz
+    '''
+    autocorr = autocorrelate(y)
+    estimate = pitchFromAC(autocorr, sr, autocorrelated=True)
+    # if the pitch is withing frequency bounds - the interval (20hz, 4000hz)
+    if 20 < estimate < 4000:  # todo make min and max frequencies keyword arguments
+        fixOctave3(y, sr, estimate)  # right now this is just here to test the method
+        return fixOctave2(autocorr, estimate, sr, log)
+    return 0
+
+
 # copied from https://gist.github.com/endolith/148112
 def A_weighting(fs):
     """Design of an A-weighting filter.
@@ -72,21 +88,6 @@ def getPitchCheap(y, sr, depth=1, fmin=16, fmax=4000):
         fmin = pitch * (1 - radius)
         filt = helper_butter(sr, fmin, fmax)
         y = signal.sosfiltfilt(filt, y)
-
-
-def getPitch(y, sr):
-    '''
-    :param y: the waveform to run pitch detection on
-    :param sr: the sampling rate of the waveform
-    :return: the estimated frequency of the waveform, in hz
-    '''
-    autocorr = autocorrelate(y)
-    estimate = pitchFromAC(autocorr, sr, autocorrelated=True)
-    # if the pitch is withing frequency bounds - the interval (20hz, 4000hz)
-    if 20 < estimate < 4000:  # todo make min and max frequencies keyword arguments
-        fixOctave3(y, sr, estimate)  # right now this is just here to test the method
-        return fixOctave2(autocorr, estimate, sr, log)
-    return 0
 
 
 def pitchFromAC(y, sr, autocorrelated=False):
