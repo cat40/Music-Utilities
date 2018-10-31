@@ -29,8 +29,8 @@ def getPitch(y, sr):
     :return: the estimated frequency of the waveform, in hz
     '''
     autocorr = autocorrelate(y)
-    # estimate = pitchFromAC(autocorr, sr, autocorrelated=True)
-    estimate = getPitchCheap(y, sr, depth=1)
+    estimate = pitchFromAC(autocorr, sr, autocorrelated=True)
+    # estimate = getPitchCheap(y, sr, depth=1)
     # if the pitch is withing frequency bounds - the interval (20hz, 4000hz)
     if 20 < estimate < 4000:  # todo make min and max frequencies keyword arguments
         fixOctave3(y, sr, estimate)  # right now this is just here to test the method
@@ -71,6 +71,7 @@ def getPitchCheap(y, sr, depth=1, fmin=16, fmax=4000):
     Another pitch getting method. precision on a pure sine wav seems to be about +- 0.5 to 1
     how it works:
     librosa.piptrack returns paralell arrays of pitches and magnitudes for each bin. Pitch at the max magnidute is the dominent pitch.
+    This is an increadibly terrible method
     '''
     y = copy.deepcopy(y)
     # filt = cls.helper_butter(sr, fmin, fmax) # todo make this work (has a nyqulist error)
@@ -174,15 +175,39 @@ def fixOctave3(y, sr, guess):
     '''
     Octave correction using HPS, as described here:
         http://musicweb.ucsd.edu/~trsmyth/analysis/Harmonic_Product_Spectrum.html
+    For the moment, only works with a guess from getPitchCheap() due to array indexing problems (the estimate must be in the pitch array from librosa.piptrack())
+
+    process:
+        Get 2nd harmonic of guess (possibly the -2nd harmonic, half the frequnecy)
+        if the amplitude of the 2nd harmonic is about half the amplitude of the chosen pitch, and the ratio is above
+        and arbitray threshold (0.2?), choose the lower octave
+        May have issues since most octave errors result in the octave being too low...
+    TODO: make the index checking find the closest value, not just an exact match
     :param y: the waveform to determine the pitch over
     :param sr: sampling rate of the waveform
     :param guess: Initial guess at pitch
-    :return:
+    :return: a modified guess with the octave (hopefully) corrected, in hertz
     '''
+    # To correct, apply this rule: if the second peak amplitude below initially chosent pitch is approximately 1/2 of
+    # the chosen pitch AND the ratio of amplitudes is above a threshold (e.g., 0.2 for 5 harmonics),
+    # THEN select the lower octave peak as the pitch for the current frame.
     pitches, magnitudes = librosa.piptrack(y=y, sr=sr)
-    print("guess in pitches?", guess in pitches, file=sys.stderr)
     indexOfGuess = numpy.where(pitches == guess)
-    print(indexOfGuess, file=sys.stderr)
+    print('pitches.py.fixOctave3: index of guess =', indexOfGuess)
+    magnitudeOfGuess = magnitudes[indexOfGuess]
+    # indexOf
+
+
+def get_closest_value(array : numpy.ndarray, value):
+    '''
+    finds the closest value to a specified target in an array
+    Mostly from https://stackoverflow.com/a/2566508
+    :param array: The array to be searched
+    :param value: The value to be searched for
+    :return: The closest value that exists in the array
+    '''
+    indexOfClosestValue = (numpy.abs(array - value)).argmin()
+    return array[indexOfClosestValue]
 
 
 def autocorrelate(y, n=2):
