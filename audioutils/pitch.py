@@ -33,8 +33,8 @@ def getPitch(y, sr):
     # estimate = getPitchCheap(y, sr, depth=1)
     # if the pitch is withing frequency bounds - the interval (20hz, 4000hz)
     if 20 < estimate < 4000:  # todo make min and max frequencies keyword arguments
-        fixOctave3(y, sr, estimate)  # right now this is just here to test the method
-        return fixOctave2(autocorr, estimate, sr, log)
+        return fixOctave3(y, sr, estimate)
+        # return fixOctave2(autocorr, estimate, sr, log)
     return 0
 
 
@@ -171,7 +171,7 @@ def fixOctave2(autocorr, note, sr, thresholdF, maxfreq=4000):
     raise Exception('no note was found')  # something went wrong
 
 
-def fixOctave3(y, sr, guess):
+def fixOctave3(y, sr, guess, threshold=0.2):
     '''
     Octave correction using HPS, as described here:
         http://musicweb.ucsd.edu/~trsmyth/analysis/Harmonic_Product_Spectrum.html
@@ -192,10 +192,14 @@ def fixOctave3(y, sr, guess):
     # the chosen pitch AND the ratio of amplitudes is above a threshold (e.g., 0.2 for 5 harmonics),
     # THEN select the lower octave peak as the pitch for the current frame.
     pitches, magnitudes = librosa.piptrack(y=y, sr=sr)
-    indexOfGuess = numpy.where(pitches == guess)
+    indexOfGuess = get_closest_value(pitches, guess)
     print('pitches.py.fixOctave3: index of guess =', indexOfGuess)
     magnitudeOfGuess = magnitudes[indexOfGuess]
-    # indexOf
+    indexOfGuess2ndHarmonic = get_closest_value(pitches, guess/2)  # get the index of half the frequency of the guess
+    magnitudeOfSecondHarmonic = magnitudes[indexOfGuess2ndHarmonic]
+    if abs(magnitudeOfGuess - magnitudeOfSecondHarmonic*2) >= 5 and magnitudeOfGuess/magnitudeOfSecondHarmonic > threshold:
+        return guess/2
+    return guess
 
 
 def get_closest_value(array : numpy.ndarray, value):

@@ -9,6 +9,12 @@ import warnings
 '''
 ideas for test songs:
 The Tinker (Irish Rovers) for filtering out background parts to focus on the melody
+
+
+ideas:
+For getting chords:
+    Analyize the lower harmonics and see what happens
+    Look at the spectogram of a song with known chords and melody and try to find a pattern
 '''
 # todo reorganize audioutils into seperate files for pitch and onset detection stuff
 # todo try making a stream type music object where it is read in order through a while loop and can have attributes like current_key and current_tempo
