@@ -287,6 +287,30 @@ def autocorrelate(y, n=2):
     return numpy.fft.irfft(prevAutocorr)
 
 
+def normalized_autocorrelate(y, sr):
+    '''
+    The normalized autocorrellation of a signal. Adapted from code presented in
+    https://gerrybeauregard.wordpress.com/2013/07/15/high-accuracy-monophonic-pitch-estimation-using-normalized-autocorrelation/
+    Licensed under MIT License
+    :param y: waveform to be autocorrelated
+    :param sr: sampling rate of waveform to be autocorrelated
+    :return: The normalized autocorrelation of the waveform (numpy array)
+    '''
+    minimumPeriod = sr // 4000
+    maximumPeriod = sr // 20
+    nac = numpy.zeros(y.shape)
+    for period in range(minimumPeriod-1, maximumPeriod+2):
+        autocorrAtPeriod = 0
+        sumOfSquaresBeginning = 0
+        sumOfSquaresEnd = 0
+        for i in range(len(y) - period):
+            autocorrAtPeriod += y[i]*y[i+period]
+            sumOfSquaresBeginning += y[i]**2
+            sumOfSquaresEnd += y[i+period]**2
+        nac[period] = autocorrAtPeriod / math.sqrt(sumOfSquaresEnd * sumOfSquaresBeginning)
+    return nac
+
+
 # just a wrapper for scipy.signal.butter for readability
 def helper_butter(sr, fmin=0, fmax=None, order=6, output='sos'):
     nyquist = sr / 2
