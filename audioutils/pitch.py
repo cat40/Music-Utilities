@@ -28,12 +28,12 @@ def getPitch(y, sr):
     :param sr: the sampling rate of the waveform
     :return: the estimated frequency of the waveform, in hz
     '''
-    autocorr = autocorrelate(y)
+    autocorr = normalized_autocorrelate(y, sr)
     estimate = pitchFromAC(autocorr, sr, autocorrelated=True)
     # estimate = getPitchCheap(y, sr, depth=1)
     # if the pitch is withing frequency bounds - the interval (20hz, 4000hz)
     if 20 < estimate < 4000:  # todo make min and max frequencies keyword arguments
-        return estimate
+        return fixOctave4(autocorr, estimate, sr)
         # return fixOctave3(y, sr, estimate)
         # return fixOctave2(autocorr, estimate, sr, log)
     return 0
@@ -232,23 +232,24 @@ def fixOctave4(autocorr, estimate, sr, minfreq = 20, maxfreq = 4000):
     :param maxfreq:
     :return:
     '''
-    minimumPeriod = sr / (maxfreq - 1)
-    maximumPeriod = sr / (minfreq + 1)
-    indexOfEstimate = get_index_of_closest_value(autocorr, estimate)  # todo this won't work, need to convert frequency back to period first...
+    minimumPeriod = int(sr // (maxfreq - 1))
+    maximumPeriod = int(sr // (minfreq + 1))
+    estimatePeriod = int(sr // estimate)  # todo this won't work, need to convert frequency back to period first...
     subMultipleThreshold = 0.9  # if the strength at all submultiples of the peak position, assume the submultiple is the actual period
-    maximumMultiple = indexOfEstimate // minimumPeriod
-    estimatePeriod = indexOfEstimate
+    maximumMultiple = int(estimatePeriod // minimumPeriod)
+    estimatePeriod = estimatePeriod
+    print(maximumMultiple)
     for submultiple in range(maximumMultiple, 0, -1):
         submultiplesAreStrong = True
         for subsubmultiple in range(1, submultiple):
             subsubmultiple_period = int(subsubmultiple * estimatePeriod // submultiple + 0.5)
-            if autocorr[subsubmultiple_period] < subMultipleThreshold * autocorr[indexOfEstimate]:
+            if autocorr[subsubmultiple_period] < subMultipleThreshold * autocorr[estimatePeriod]:
                 submultiplesAreStrong = False
                 break
         if submultiplesAreStrong:
-            indexOfEstimate = indexOfEstimate // submultiple
+            estimatePeriod = estimatePeriod // submultiple
             break
-    return sr / indexOfEstimate
+    return sr / estimatePeriod
 
 
 def get_index_of_closest_value(array : numpy.ndarray, value):
