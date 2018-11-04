@@ -33,7 +33,8 @@ def getPitch(y, sr):
     # estimate = getPitchCheap(y, sr, depth=1)
     # if the pitch is withing frequency bounds - the interval (20hz, 4000hz)
     if 20 < estimate < 4000:  # todo make min and max frequencies keyword arguments
-        return fixOctave3(y, sr, estimate)
+        return estimate
+        # return fixOctave3(y, sr, estimate)
         # return fixOctave2(autocorr, estimate, sr, log)
     return 0
 
@@ -192,14 +193,74 @@ def fixOctave3(y, sr, guess, threshold=0.2):
     # the chosen pitch AND the ratio of amplitudes is above a threshold (e.g., 0.2 for 5 harmonics),
     # THEN select the lower octave peak as the pitch for the current frame.
     pitches, magnitudes = librosa.piptrack(y=y, sr=sr)
-    indexOfGuess = get_closest_value(pitches, guess)
+    print('pitches.py.fixOctave3: guess =', guess)
+    print('pitches.py.fixOctave3: pitches =', numpy.any(numpy.count_nonzero(pitches, )))
+    indexOfGuess = get_index_of_closest_value(pitches, guess)
+    print('pitches.py.fixOctave3: pitch =', pitches[indexOfGuess])
     print('pitches.py.fixOctave3: index of guess =', indexOfGuess)
     magnitudeOfGuess = magnitudes[indexOfGuess]
-    indexOfGuess2ndHarmonic = get_closest_value(pitches, guess/2)  # get the index of half the frequency of the guess
+    indexOfGuess2ndHarmonic = get_index_of_closest_value(pitches, guess/2)  # get the index of half the frequency of the guess
     magnitudeOfSecondHarmonic = magnitudes[indexOfGuess2ndHarmonic]
+    print('pitches.py.fixOctave3: magnitude of guess =', magnitudeOfGuess)
     if abs(magnitudeOfGuess - magnitudeOfSecondHarmonic*2) >= 5 and magnitudeOfGuess/magnitudeOfSecondHarmonic > threshold:
         return guess/2
     return guess
+
+
+def fixOctave4(autocorr, estimate, sr, minfreq = 20, maxfreq = 4000):
+    '''
+    A fairly simple algorithm written by Gerald Beauregard, converted to python from
+    https://gerrybeauregard.wordpress.com/2013/07/15/high-accuracy-monophonic-pitch-estimation-using-normalized-autocorrelation/
+    Licensed under MIT License:
+    Copyright (c) 2009 Gerald T Beauregard
+    Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+    documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
+    rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
+    permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+    The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+    THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+    TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+    --------------------------------------------------------------------------------------------------------------------
+    :param autocorr:
+    :param estimate:
+    :param sr:
+    :param minfreq:
+    :param maxfreq:
+    :return:
+    '''
+    minimumPeriod = sr / (maxfreq - 1)
+    maximumPeriod = sr / (minfreq + 1)
+    indexOfEstimate = get_index_of_closest_value(autocorr, estimate)  # todo this won't work, need to convert frequency back to period first...
+    subMultipleThreshold = 0.9  # if the strength at all submultiples of the peak position, assume the submultiple is the actual period
+    maximumMultiple = indexOfEstimate // minimumPeriod
+    estimatePeriod = indexOfEstimate
+    for submultiple in range(maximumMultiple, 0, -1):
+        submultiplesAreStrong = True
+        for subsubmultiple in range(1, submultiple):
+            subsubmultiple_period = int(subsubmultiple * estimatePeriod // submultiple + 0.5)
+            if autocorr[subsubmultiple_period] < subMultipleThreshold * autocorr[indexOfEstimate]:
+                submultiplesAreStrong = False
+                break
+        if submultiplesAreStrong:
+            indexOfEstimate = indexOfEstimate // submultiple
+            break
+    return sr / indexOfEstimate
+
+
+def get_index_of_closest_value(array : numpy.ndarray, value):
+    '''
+    finds the closest value to a specified target in an array
+    Mostly from https://stackoverflow.com/a/2566508
+    :param array: The array to be searched
+    :param value: The value to be searched for
+    :return: The index of the closest value that exists in the array
+    '''
+    indexOfClosestValue = (numpy.abs(array - value)).argmin()
+    return indexOfClosestValue
 
 
 def get_closest_value(array : numpy.ndarray, value):
@@ -210,8 +271,7 @@ def get_closest_value(array : numpy.ndarray, value):
     :param value: The value to be searched for
     :return: The closest value that exists in the array
     '''
-    indexOfClosestValue = (numpy.abs(array - value)).argmin()
-    return array[indexOfClosestValue]
+    return array[get_index_of_closest_value(array, value)]
 
 
 def autocorrelate(y, n=2):
